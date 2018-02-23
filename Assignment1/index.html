@@ -4,18 +4,69 @@
       <meta charset="utf-8">
       <title>D3 Page Template</title>
       <script type="text/javascript" src="d3/d3.js"></script>
+      <style>
+        .h2
+        {
+          font-family: Georgia;
+          font-weight: bold;
+          font-size: 36px;
+        }
+        .p-custom
+        {
+          font-family: Georgia;
+          font-size: 14px;
+          line-height: 1.6em;
+        }
+
+      </style>
   </head>
   <body>
+    <h2>Part 1: DAOST Chapter 2 Questions</h2>
+    <h3>Explain in your own words the point of the jitter plot.</h3>
+    <p>The point of a jitter plot is to se where the data is clustered together</p>
+    <h3>Explain in your own words the point of figure 2-3. (I'm going to skip saying "in your own words" going forward, but I hope
+      you get the point; I expect all answers to be in your own words)</h3>
+    <p>The point in figure 2-3 is that dependent on the alignment of your bins the graph can look totaly different but the data is
+      the same.</p>
+    <h3>The author of DAOST (Philipp Janert) likes KDEs (and think they're better than histograms). And I don't. I didn't give a
+      detailed explanation in the video, but now that works to my advantage. I'll ask you guys to think about this and thereby
+      create an excellent exercise: When can KDEs be misleading?</h3>
+    <p>The KDE can be misleading if we set bandwidth to low or to high then the curve of the graph will be very fladt or have a
+      lot of very sharp peaks.</p>
+    <h3>I've discussed some strengths of the CDF - there are also weaknesses. Janert writes "[CDFs] have less intuitive appeal
+      than histograms of KDEs". What does he mean by that?</h3>
+    <p>The reason for this is that we humen is beder to judge the distance then we are to judge the area under a curve this then
+      leads us to missjudge the data.</p>
+    <h3>What is a Quantile plot? What is it good for.</h3>
+    <p>It is a reverse of the CDF plot, it is good for if you want to know how big a procentage of the data is under a certain value.</p>
+    <h3>How is a Probability plot defined? What is it useful for? Have you ever seen one before?</h3>
+    <p>This is how the Probability plot is defined x<sub>i</sub>=μ+σ&Phi;<sup>-1</sup>(y<sub>i</sub>). It is useful to spot diviations
+      in the plot because if the data is a perfect Gaussian distribution the plot will be a strait line so if there is any point
+      that is not on the line then they are a diviation. Yes we have seen one before in curse 02450 Introduction to Machine Learning and
+      Data Mining</p>
+    <h3>One of the reasons I like DAOST is that Janert is so suspicious of mean, median, and related summary statistics. Explain why
+      one has to be careful when using those - and why visualization of the full data is always better.</h3>
+    <p>The reason that you have to be carefull when using mean and standard diviation is if the data is not symmetric and well
+      behaved then the values will be misleading. where as the median will be better to use because if the data is symmetric and well
+      behaved then the median and percentile vill be close to the mean and standard diviation but but when the data is not then the
+      median and percentile is still good to use.</p>
+    <h3>I love box plots. When are box plots most useful?</h3>
+    <p>If you want to visualization the distribution of the data.</p>
+    <h3>The book doesn't mention violin plots. Are those better or worse than box plots? Why?</h3>
+    <p>They are the same as box plot except that they also show the Probability density but the Probability density could be a good
+      thing to have. Because it can give a idear about if it is something that you should look closer at where in the box plot you
+      have to make a seperate analysis of the Probability density to se if there is some interesting information it that part.</p>
+
 		<h2>Part 2: DAOST Chapter 3 Questions</h2>
-		<h3>Looking at Fig 3-1, Janert writes "the data itself shows clearly that the amount of random noise in the data is small". 
+		<h3>Looking at Fig 3-1, Janert writes "the data itself shows clearly that the amount of random noise in the data is small".
 			What do you think his argument is?</h3>
 		<p>
-			He is confident that the amount of random noise is small because the data follows smooth curves. It clearly follows a pattern. If there was some data breaking the pattern, 
+			He is confident that the amount of random noise is small because the data follows smooth curves. It clearly follows a pattern. If there was some data breaking the pattern,
 			then it would probabily be noise in the data. We do not see a single point outside the pattern, therefore low noise in data.
 		</p>
 		<h3>Can you think of a real-world example of a multivariate relationship like the one in Fig 3-3 (lower right panel)?</h3>
 		<p>
-			An example of a multivariate relationship could be the measure of the effectiveness of a treatment on an infection over time. The x-axis shows the time and the y-axis shows the infection number. 
+			An example of a multivariate relationship could be the measure of the effectiveness of a treatment on an infection over time. The x-axis shows the time and the y-axis shows the infection number.
 			Each point would represent af measure of the infection number on a patient after a certain time when the treatment began. The treatment could therefore have different results depending on the patient groups. For instance, young people could be affected different than older people.
 		</p>
 		<h3>What are the two methods Janert metions for smoothing noisy data? Can you think of other ones?</h3>
@@ -28,20 +79,20 @@
 				<li>Butterworth filter</li>
 		</ul>
 		<p>
-			Depending on what kind of data you have you will apply a specific method for smoothing it out. 
+			Depending on what kind of data you have you will apply a specific method for smoothing it out.
 		</p>
 		<h3>What are residuals? Why is it a good idea to plot the residuals of your fit?</h3>
-		<p>The residuals are the measure of error of the model compared to the real data. Plotting residuals means you can 
-		easily tell how correct your model is. If the residual plot shows your model is very far off from the true values, then you should consider to change your model to fit the data.  
+		<p>The residuals are the measure of error of the model compared to the real data. Plotting residuals means you can
+		easily tell how correct your model is. If the residual plot shows your model is very far off from the true values, then you should consider to change your model to fit the data.
 		</p>
 		<h3>Explain in your own words the point of the smooth tube in figure 3-7.</h3>
 		<p>
-			The smooth tube is useful for predicting values. For instance in figure 3-7, you can assume most of the results in year 1920 was between 142 and 150. You can also extent the smoothing curves to include the future to predict future values. 
-			This is useful if you want to predict what the expected results of marathon runners are in the future. The danger of extenting the smoothing curves is that the model based on historic data is not neccesarily a good estimator for predicting the future. 
+			The smooth tube is useful for predicting values. For instance in figure 3-7, you can assume most of the results in year 1920 was between 142 and 150. You can also extent the smoothing curves to include the future to predict future values.
+			This is useful if you want to predict what the expected results of marathon runners are in the future. The danger of extenting the smoothing curves is that the model based on historic data is not neccesarily a good estimator for predicting the future.
 		</p>
 		<h3>What kind of relationships will a semi-log plot help you discover?</h3>
 		<p>
-			The semi-log plot can help you discover the relationship between x and y is exponential. If you take the log of y as a function of x, the plot will show either the data following a straight line or not. If it follows a straight line, then we know the relationship of x and y is exponential otherwise not. 
+			The semi-log plot can help you discover the relationship between x and y is exponential. If you take the log of y as a function of x, the plot will show either the data following a straight line or not. If it follows a straight line, then we know the relationship of x and y is exponential otherwise not.
 		</p>
 		<h3>What kind of functions will loglog plots help you see?</h3>
 		<p>The loglog plots can help you discover power-law relationship of x and y. For instance, their example shows that the heart rate of an animal is related to the mass of the animal. Specifically it shows f ~ m<sup>-1/4</sup> where m is the mass and f is the heart rate.
@@ -49,9 +100,35 @@
 		</p>
 		<h3>What the h#ll is banking and what element from our visual system does it use to help us see patterns? What are potential problems with banking?</h3>
 		<p>
-			Banking is a graphical method where you change the aspect ratio of the plot. Sometimes changing the aspect ratio The aspect ratio can 
+			Banking is a graphical method where you change the aspect ratio of the plot. Sometimes changing the aspect ratio The aspect ratio can
 		</p>
 
+    <h2>Part 3: Viz 1</h2>
+    <p>This is a reproduction of <a href="http://iquantny.tumblr.com/post/129373499164/this-is-quantifiably-the-best-month-to-go-to-the">
+      http://iquantny.tumblr.com/post/129373499164/this-is-quantifiably-the-best-month-to-go-to-the</a></p>
+    <h2 class="h2">This is Quantifiably the Best Month to go to the Farmers Market</h2>
+    <p class="p-custom">As part of a homework assignment, I ask my students at Pratt to go out and chart something of interest to them, and
+      <a href="https://www.linkedin.com/in/kvsavarese/">Katherine Savarese</a> came back with a simple chart about farmers markets
+      that I loved- it inspired this post.</p>
+    <p class="p-custom">You probably know that farmers markets are a staple across <a href="http://www.grownyc.org/files/gmkt/map.pdf">all five boroughs</a> of New York City, but September happens to be a
+      very special month. Why is that?  Well, it turns out September is the month with the most unique types of fresh produce- forty
+      three to be exact.</p>
+    <p class="p-custom">To show the current offerings, we charted how many types of fruits and vegetables are available by month, and showed if they
+      were fresh or from storage.</p>
+
+    <script type="text/javascript">
+      var w = 500;
+      var h = 100;
+      var padding = 20;
+      var dataset = [[5, 20], [480, 90], [250, 50], [100, 33], [330, 95],
+                    [410, 12], [475, 44], [25, 67], [85, 21], [220, 88]];
+    </script>
+    <p class="p-custom">If you miss the month of September, you might be behind the fruit curve, but there are plenty more months of vegetables left.
+      The chart shows that fresh vegetables are available 9 out of 12 months, but fruit is only available 5 out of 12. Now if only
+      we could quantify how delicious the produce is…</p>
+    <p class="p-custom">Data from: <a href="http://www.grownyc.org/greenmarket/whatsavailable">
+      http://www.grownyc.org/greenmarket/whatsavailable</a></p>
+      
 	</body>
-	
+
 </html>
