@@ -118,8 +118,11 @@
 
     <script type="text/javascript">
       var w = 500;
-      var h = 100;
-      var barPadding = 20;
+      var w2 = w + 300;
+      var h = 300;
+      var numberOfMoth = 12;
+      var padding = 20;
+      var padding2 = 20;
 
 			var rowC = function(d) {
 				return {a: "he", b: d.hej};
@@ -145,16 +148,164 @@
 				};
 			};
 
+      var dataset;
+      var map = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      var ukpData = [];
 			d3.csv("data.csv", rowConverter, function(data) {
 				console.log(data);
+        dataset = data;
+
+        var tmp = 0;
+
+        for (var i = 0; i < dataset.length; i++) {
+          ukpData.push([dataset[i].Jan,dataset[i].Feb,dataset[i].Mar,dataset[i].Apr,dataset[i].May,dataset[i].Jun,dataset[i].Jul,
+        dataset[i].Aug,dataset[i].Sep,dataset[i].Oct,dataset[i].Nov,dataset[i].Dec]);
+        }
+        //var xScale = GetXScale();
+        //var yScale = GetYScale();
+        var xScale = d3.scaleBand()
+          .domain(map)
+          .range([0 + padding, w])
+          .paddingInner(0.05);
+
+        var yScale = d3.scaleLinear()
+							.domain([0, d3.max(ukpData[0])])
+							.range([h - padding, 0 + padding]);
+
+
+        var xAxis = d3.axisBottom(xScale)
+          .ticks(12);
+
+        var yAxis = d3.axisLeft(yScale)
+          .ticks(5);
+
+        var svg = d3.select("body")
+						.append("svg")
+						.attr("width", w2)
+						.attr("height", h);
+
+        svg.append("g")
+          .attr("id", "rect")
+          .attr("clip-path", "url(#chart-area)")
+          .selectAll("rect")
+          .data(dataset)
+          .enter()
+          .append("rect")
+          .attr("x", function(d, i) {
+            //console.log(xScale("Feb"));
+              return w + padding2;	//Bar width of 20 plus 1 for padding
+           })
+          .attr("y", function(d, i) {
+            console.log();
+            return i*padding2*2 +(h -((dataset.length-1)*19 + (dataset.length)*(h/15)))/2;
+
+          })
+          .attr("width", h / 15)
+          .attr("height", function(d) {
+            return h / 15;
+          })
+          .attr("fill", function(d, i) {
+            if(i == 0) {
+              return "red";
+            }else if(i == 1) {
+              return "blue";
+            }else if(i == 2) {
+              return "green";
+            }else {
+              return "yellow";
+            }
+          });
+
+          svg.select("#rect")
+            .selectAll("text")
+            .data(dataset)
+            .enter()
+            .append("text")
+            .text(function(d) {
+              return d.Category + " " + d.Freshness;
+            })
+            .attr("x", function(d, i) {
+              //console.log(xScale("Feb"));
+                return w + padding2 + (h/15)+ padding2;	//Bar width of 20 plus 1 for padding
+             })
+            .attr("y", function(d, i) {
+              console.log();
+              return i*padding2*2 +(h -((dataset.length-1)*19 + (dataset.length)*(h/15)))/2 + h/15/2;
+
+            })
+            .attr("width", h / 15)
+            .attr("height", function(d) {
+              return h / 15;
+            })
+            .attr("class", function(d, i) {
+              return "boxText" + i;
+            });
+
+        svg.append("g")
+          .attr("id", "graph")
+          .attr("clip-path", "url(#chart-area)")
+          .selectAll("rect")
+          .data(ukpData[0])
+          .enter()
+          .append("rect")
+          .attr("x", function(d, i) {
+            //console.log(xScale("Feb"));
+  			   		return xScale(map[i]);	//Bar width of 20 plus 1 for padding
+  			   })
+          .attr("y", function(d) {
+            console.log(yScale(10));
+            return yScale(d);
+
+          })
+          .attr("width", xScale.bandwidth())
+          .attr("height", function(d) {
+            return h - yScale(d) - padding;
+          })
+          .attr("fill", function(d) {
+            return "rgb(255, 0, 0)";
+          });
+
+        svg.append("g")
+   				.attr("class", "x axis")
+          .attr("transform", "translate(0," + (h - padding) + ")")
+   				.call(xAxis);
+
+        svg.append("g")
+   				.attr("class", "y axis")
+          .attr("transform", "translate(" + padding + ",0)")
+   				.call(yAxis);
+
 			});
+
+      d3.select("boxText0").on("click", function() {
+        console.log(109407518039);
+      });
+
+      var GetXScale = function() {
+        var xScale = d3.scaleBand()
+          .domain(["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"])
+          .range([0 + padding, w])
+          .paddingInner(0.05);
+        return xScale;
+      }
+      var GetYScale = function() {
+        var yScale = d3.scaleLinear()
+							.domain([0, d3.max(ukpData[0])])
+							.range([h - padding, 0 + padding]);
+        return yScale;
+      }
+      var plotData = function(svg, xScale, yScale) {
+
+      }
+
+
     </script>
     <p class="p-custom">If you miss the month of September, you might be behind the fruit curve, but there are plenty more months of vegetables left.
       The chart shows that fresh vegetables are available 9 out of 12 months, but fruit is only available 5 out of 12. Now if only
       we could quantify how delicious the produce is…</p>
     <p class="p-custom">Data from: <a href="http://www.grownyc.org/greenmarket/whatsavailable">
       http://www.grownyc.org/greenmarket/whatsavailable</a></p>
-      
+
 	</body>
 
 </html>
