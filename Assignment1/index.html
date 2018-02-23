@@ -3,7 +3,7 @@
   <head>
       <meta charset="utf-8">
       <title>D3 Page Template</title>
-      <script type="text/javascript" src="d3/d3.js"></script>
+      <script type="text/javascript" src="d3.js"></script>
       <style>
         .h2
         {
@@ -119,9 +119,35 @@
     <script type="text/javascript">
       var w = 500;
       var h = 100;
-      var padding = 20;
-      var dataset = [[5, 20], [480, 90], [250, 50], [100, 33], [330, 95],
-                    [410, 12], [475, 44], [25, 67], [85, 21], [220, 88]];
+      var barPadding = 20;
+
+			var rowC = function(d) {
+				return {a: "he", b: d.hej};
+			}
+
+			var rowConverter = function(row) {
+				return {
+					Index: parseInt(row.Index),
+					Category: row.Category,
+					Freshness: row.Freshness,
+					Jan: parseInt(row.Jan),
+					Feb: parseInt(row.Feb),
+					Mar: parseInt(row.Mar),
+					Apr: parseInt(row.Apr),
+					May: parseInt(row.May),
+					Jun: parseInt(row.Jun),
+					Jul: parseInt(row.Jul),
+					Aug: parseInt(row.Aug),
+					Sep: parseInt(row.Sep),
+					Oct: parseInt(row.Oct),
+					Nov: parseInt(row.Nov),
+					Dec: parseInt(row.Dec)
+				};
+			};
+
+			d3.csv("data.csv", rowConverter, function(data) {
+				console.log(data);
+			});
     </script>
     <p class="p-custom">If you miss the month of September, you might be behind the fruit curve, but there are plenty more months of vegetables left.
       The chart shows that fresh vegetables are available 9 out of 12 months, but fruit is only available 5 out of 12. Now if only
