@@ -18,6 +18,13 @@
           line-height: 1.6em;
         }
 
+        .graphText
+        {
+          font-family: Georgia;
+          font-weight: bold;
+          font-size: 30px;
+        }
+
       </style>
   </head>
   <body>
@@ -120,9 +127,10 @@
       var w = 500;
       var w2 = w + 300;
       var h = 300;
+      var h2 = 400;
       var numberOfMoth = 12;
-      var padding = 20;
-      var padding2 = 20;
+      var padding = 25;
+      var padding2 = 25;
 
 			var rowC = function(d) {
 				return {a: "he", b: d.hej};
@@ -170,7 +178,7 @@
 
         var yScale = d3.scaleLinear()
 							.domain([0, d3.max(ukpData[0])])
-							.range([h - padding, 0 + padding]);
+							.range([h - padding, 0 + padding /*+ (h2 -h)*/]);
 
 
         var xAxis = d3.axisBottom(xScale)
@@ -182,11 +190,12 @@
         var svg = d3.select("body")
 						.append("svg")
 						.attr("width", w2)
-						.attr("height", h);
+						.attr("height", h2);
 
         svg.append("g")
           .attr("id", "rect")
           .attr("clip-path", "url(#chart-area)")
+          .attr("transform", "translate(0, 100)")
           .selectAll("rect")
           .data(dataset)
           .enter()
@@ -237,13 +246,45 @@
             .attr("height", function(d) {
               return h / 15;
             })
-            .attr("class", function(d, i) {
-              return "boxText" + i;
+            .on("click", function(d, i) {
+              yScale.domain([0, d3.max(ukpData[i])])
+              yAxis = d3.axisLeft(yScale).ticks(5);
+              svg.select(".y")
+              .transition()
+              .duration(1000)
+              .call(yAxis);
+              svg.select("#graph").selectAll("rect")
+                .data(ukpData[i])
+                .transition()
+                .duration(1000)
+                /*.attr("x", function(d, i) {
+                  //console.log(xScale("Feb"));
+                    return xScale(map[i]);	//Bar width of 20 plus 1 for padding
+                 })*/
+                .attr("y", function(d) {
+                  return yScale(d);
+
+                })
+                .attr("height", function(d) {
+                  return h - yScale(d) - padding;
+                })
+                .attr("fill", function(d) {
+                  if(i == 0) {
+                    return "red";
+                  }else if(i == 1) {
+                    return "blue";
+                  }else if(i == 2) {
+                    return "green";
+                  }else {
+                    return "yellow";
+                  }
+                });
             });
 
         svg.append("g")
           .attr("id", "graph")
           .attr("clip-path", "url(#chart-area)")
+          .attr("transform", "translate(0, 100)")
           .selectAll("rect")
           .data(ukpData[0])
           .enter()
@@ -265,21 +306,25 @@
             return "rgb(255, 0, 0)";
           });
 
-        svg.append("g")
+        svg.select("#graph").append("g")
    				.attr("class", "x axis")
           .attr("transform", "translate(0," + (h - padding) + ")")
    				.call(xAxis);
 
-        svg.append("g")
+        svg.select("#graph").append("g")
    				.attr("class", "y axis")
           .attr("transform", "translate(" + padding + ",0)")
    				.call(yAxis);
 
-			});
-
-      d3.select("boxText0").on("click", function() {
-        console.log(109407518039);
-      });
+        svg.append("g")
+        .append("text")
+        .attr("class", "graphText")
+        .text("NYC Green Markets - Unique Produce Types")
+        .attr("x", padding)
+        .attr("y", (h2-h)/2)
+        .attr("width", w2)
+        .attr("height", 0)
+        });
 
       var GetXScale = function() {
         var xScale = d3.scaleBand()
