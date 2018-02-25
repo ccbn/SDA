@@ -107,8 +107,22 @@
 		</p>
 		<h3>What the h#ll is banking and what element from our visual system does it use to help us see patterns? What are potential problems with banking?</h3>
 		<p>
-			Banking is a graphical method where you change the aspect ratio of the plot. Sometimes changing the aspect ratio The aspect ratio can
-		</p>
+      Banking is a graphical method where you change the aspect ratio of the plot. 
+      For instance, stretching the vertical direction of the whole plot will change the aspect ratio and it will be easier to see smaller changes in the vertical direction.
+      The disadvantage is that if the aspect ratio is really off it can be misleading. For example a big jump in a plot can in reality be a very small change in the data.
+    </p>
+    <h3>I think figure 3-14 makes an important point about linear fits that is rarely made. What is it?</h3>
+    <p>
+      The point is that if the data is linear, the model should be the same indpendent of the input and response variable chosen.
+      If the same data gives two significantly different models just by swapping the input and response variable then the conclusion is that a linear model is not a good one.
+    </p>
+    <h3>Summarize the discussion of Graphical Analysis and Presentation Graphics on pp. 68-69 in your own words.</h3>
+    <p>
+      There exists two purposes of visualizing data. The first is graphical analysis, also known as exploration in this course, and the second is presentation graphics, also known as explaining graphics. 
+    Graphical analysis is an analysis of data using graphics. Multiple plots should be created to see the data in different perspectives. You do not neccesarily know what you are looking for, only more insight.
+    Presentation graphics is the focused on presenting data that is already understood maybe by doing a graphical analysis first. 
+    The presenting graphics should be easily understood and take into account who is the reader.  
+    </p>
 
     <h2>Part 3: Viz 1</h2>
     <p>This is a reproduction of <a href="http://iquantny.tumblr.com/post/129373499164/this-is-quantifiably-the-best-month-to-go-to-the">
@@ -160,7 +174,9 @@
       var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
       var ukpData = [];
 
-      
+      //Main function call. Retrieves data from file and runs an ananoymous 
+      //function that creates the visualizations.
+      //The 
 			d3.csv("data.csv", rowConverter, function(data) {
         dataset = data;
         
