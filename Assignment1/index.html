@@ -24,10 +24,22 @@
           font-weight: bold;
           font-size: 30px;
         }
+        .line
+        {
+          stroke: green;
+          fill: white;
+        }
+
+        .line2
+        {
+          stroke: red;
+          fill: white;
+        }
 
       </style>
   </head>
   <body>
+    <div id="Part1">
     <h2>Part 1: DAOST Chapter 2 Questions</h2>
     <h3>Explain in your own words the point of the jitter plot.</h3>
     <p>The point of a jitter plot is to se where the data is clustered together</p>
@@ -63,7 +75,9 @@
     <p>They are the same as box plot except that they also show the Probability density but the Probability density could be a good
       thing to have. Because it can give a idear about if it is something that you should look closer at where in the box plot you
       have to make a seperate analysis of the Probability density to se if there is some interesting information it that part.</p>
+    </div>
 
+    <div id="Part2">
 		<h2>Part 2: DAOST Chapter 3 Questions</h2>
 		<h3>Looking at Fig 3-1, Janert writes "the data itself shows clearly that the amount of random noise in the data is small".
 			What do you think his argument is?</h3>
@@ -107,7 +121,7 @@
 		</p>
 		<h3>What the h#ll is banking and what element from our visual system does it use to help us see patterns? What are potential problems with banking?</h3>
 		<p>
-      Banking is a graphical method where you change the aspect ratio of the plot. 
+      Banking is a graphical method where you change the aspect ratio of the plot.
       For instance, stretching the vertical direction of the whole plot will change the aspect ratio and it will be easier to see smaller changes in the vertical direction.
       The disadvantage is that if the aspect ratio is really off it can be misleading. For example a big jump in a plot can in reality be a very small change in the data.
     </p>
@@ -118,12 +132,14 @@
     </p>
     <h3>Summarize the discussion of Graphical Analysis and Presentation Graphics on pp. 68-69 in your own words.</h3>
     <p>
-      There exists two purposes of visualizing data. The first is graphical analysis, also known as exploration in this course, and the second is presentation graphics, also known as explaining graphics. 
+      There exists two purposes of visualizing data. The first is graphical analysis, also known as exploration in this course, and the second is presentation graphics, also known as explaining graphics.
     Graphical analysis is an analysis of data using graphics. Multiple plots should be created to see the data in different perspectives. You do not neccesarily know what you are looking for, only more insight.
-    Presentation graphics is the focused on presenting data that is already understood maybe by doing a graphical analysis first. 
-    The presenting graphics should be easily understood and take into account who is the reader.  
+    Presentation graphics is the focused on presenting data that is already understood maybe by doing a graphical analysis first.
+    The presenting graphics should be easily understood and take into account who is the reader.
     </p>
+    </div>
 
+    <div id="Part3">
     <h2>Part 3: Viz 1</h2>
     <p>This is a reproduction of <a href="http://iquantny.tumblr.com/post/129373499164/this-is-quantifiably-the-best-month-to-go-to-the">
       http://iquantny.tumblr.com/post/129373499164/this-is-quantifiably-the-best-month-to-go-to-the</a></p>
@@ -174,9 +190,9 @@
       var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
       var ukpData = [];
 
-      //Main function call. Retrieves data from file and runs an ananoymous 
+      //Main function call. Retrieves data from file and runs an ananoymous
       //function that creates the visualizations.
-      //The 
+      //The
 			d3.csv("data.csv", rowConverter, function(data) {
         dataset = data;
 
@@ -392,30 +408,37 @@
 
 
     </script>
+
     <p class="p-custom">If you miss the month of September, you might be behind the fruit curve, but there are plenty more months of vegetables left.
       The chart shows that fresh vegetables are available 9 out of 12 months, but fruit is only available 5 out of 12. Now if only
       we could quantify how delicious the produce is…</p>
     <p class="p-custom">Data from: <a href="http://www.grownyc.org/greenmarket/whatsavailable">
       http://www.grownyc.org/greenmarket/whatsavailable</a></p>
+    </div>
 
+    <div id="Part4">
     <h2>Part 4: Viz 2</h2>
     <script type="text/javascript">
-      var w = 500;
-      var h = 300;
-      var padding = 35;
+      /*var w2 = 500;
+      var h2 = 300;
+      var padding3 = 35;
       var AtleteData = [];
+      var AtleteDataPart1 = [];
+      var AtleteDataPart2 = [];
 
+      var timeparse = d3.timeParse("%Y");
       var formatTime = d3.timeFormat("%Y");
-      var hourParser = d3.timeParse("%H:%M:%S");
+      var hourParser = d3.timeParse("%H.%M.%S");
       var hourFormater = d3.timeFormat("%H")
       var minuteFormater = d3.timeFormat("%M")
-      //var time = hourParser("10:34pm");
-      //d3.time.format("%H:%M:%S");	//2:55:25
+
+      var xScale2, yScale2, rScale2, xAxis2, yAxis2, line, line2;
 
 
-      var rowConverter = function(row) {
+      var rowConverter2 = function(row) {
 				return {
-          Year: parseInt(row.Year),
+          Index: parseInt(row.Index),
+          Year: timeparse(row.Year), //parseInt(row.Year),
 					Athlete: row.Athlete,
           Country_State: row.Country_State,
           Time: CalculateTimeUsed(row.Time)
@@ -423,117 +446,168 @@
 			};
 
 
-			d3.csv("MaratonMen.csv", rowConverter, function(data) {
+			d3.csv("Maraton2.csv", rowConverter2, function(data) {
         //dataset.push([data.Year, data.Time]);
-        for (var i = 0; i < data.length-1; i++) {
-          //console.log(i);
-          //console.log(data[i]);
-  				AtleteData.push([data[i].Year, data[i].Time]);					//Add new number to array
-  			}
+        AtleteData = data
+        for (var i = 0; i < AtleteData.length; i++) {
+          if(AtleteData[i].Index < 121) {
+            AtleteDataPart1.push(AtleteData[i])
+          }else {
+            AtleteDataPart2.push(AtleteData[i])
+          }
+        }
+        console.log(AtleteDataPart1);
+        console.log(AtleteDataPart2);
+        console.log(AtleteDataPart1.length);
+        //console.log(AtleteData);
 
-        d3.max(AtleteData, function(d) {
-          return d[0];
+        var xMax2 = d3.max(AtleteData, function(d) {
+          return d.Year;
         });
-        var rmax = d3.max(AtleteData, function(d) {
-          return d[1];
+
+        var xMin2 = d3.min(AtleteData, function(d) {
+          return d.Year;
         })
 
-        var rmin = d3.min(AtleteData, function(d) {
-          //console.log(d[1]);
-          return d[1];
+        var yMin2 = d3.min(AtleteData, function(d) {
+          return d.Time;
         })
-        //console.log(rmin);
-        var xScale = d3.scaleLinear()
-          .domain([d3.min(AtleteData, function(d) {
-            return d[0];
-          }), d3.max(AtleteData, function(d) {
-            return d[0];
-          })])
-          .range([padding, w - padding*2]);
 
-        var yScale = d3.scaleLinear()
-          .domain([rmin, rmax])
+        var yMax2 = d3.max(AtleteData, function(d) {
+          return d.Time;
+        });
+
+        xScale2 = d3.scaleTime()
+							   .domain([xMin2,xMax2])
+							   .range([padding, w - padding*2]);
+
+        yScale2 = d3.scaleLinear()
+          .domain([yMin2, yMax2])
           .range([h - padding, padding]);
 
-        var rScale = d3.scaleLinear()
-          .domain([0, rmax])
+        rScale2 = d3.scaleLinear()
+          .domain([0, yMax2])
           .range([2, 5]);
 
-        var aScale = d3.scaleSqrt()
-          .domain([0, rmax])
-          .range([0, 10]);
+        //Define axes
+				xAxis2 = d3.axisBottom()
+						   .scale(xScale2)
+						   .ticks(10)
+						   .tickFormat(formatTime);
 
-        var xAxis = d3.axisBottom(xScale)
-          .ticks(10);
-
-        var yAxis = d3.axisLeft(yScale)
-          .ticks(10);
+				//Define Y axis
+				yAxis2 = d3.axisLeft()
+						   .scale(yScale2)
+						   .ticks(10);
 
         //Define line generator
 				line = d3.line()
-							.defined(function(d) { return AtleteData[1] >= 0; })
-							.x(function(d) { return xScale(AtleteData[0]); })
-							.y(function(d) { return yScale(AtleteData[1]); });
+							.defined(function(d) {
+                  return d.Time >= 0;
+              })
+							.x(function(d) {
+                  return xScale2(d.Year);
+              })
+							.y(function(d) {
+                  return yScale2(d.Time);
+              });
+        line2 = d3.line()
+							.defined(function(d) {
+                  return d.Time >= 0;
+              })
+							.x(function(d) {
+                  return xScale2(d.Year);
+              })
+							.y(function(d) {
+                  return yScale2(d.Time);
+              });
 
-        var svg = d3.select("body")
+        var svg2 = d3.select("body")
 						.append("svg")
-						.attr("width", w)
-						.attr("height", h);
+						.attr("width", w2)
+						.attr("height", h2);
 
-        svg.append("clipPath")
+        svg2.append("clipPath")
           .attr("id", "chart-area")
           .append("rect")
-          .attr("x", padding)
-          .attr("y", padding)
-          .attr("width", w - padding * 3)
-          .attr("height", h - padding * 3);
+          .attr("x", padding3)
+          .attr("y", padding3)
+          .attr("width", w2 - padding3 * 3)
+          .attr("height", h2 - padding3 * 3);
 
-        svg.append("path")
-					.datum(AtleteData)
+        svg2.append("path")
+					.datum(AtleteDataPart1)
 					.attr("class", "line")
 					.attr("d", line);
 
+        svg2.append("path")
+					.datum(AtleteDataPart2)
+					.attr("class", "line2")
+					.attr("d", line2);
+
   			//Create circles
-  			svg.append("g")
+  			svg2.append("g")
            .attr("id", "circles")
            .attr("clip-path", "url(#chart-area)")
            .selectAll("circle")
-  			   .data(AtleteData)
+  			   .data(AtleteDataPart1)
   			   .enter()
   			   .append("circle")
   			   .attr("cx", function(d) {
-  			   		return xScale(d[0]);
+  			   		return xScale2(d.Year);
   			   })
   			   .attr("cy", function(d) {
-  			   		return yScale(d[1]);
+  			   		return yScale2(d.Time);
   			   })
   			   .attr("r", function(d) {
   			   		//return aScale(d[1]);
               return 2;
-  			   });
+  			   })
+           .attr("fill", "blue");
+
+        svg2.append("g")
+           .attr("id", "circles2")
+           .attr("clip-path", "url(#chart-area2)")
+           .selectAll("circle")
+   			   .data(AtleteDataPart2)
+   			   .enter()
+   			   .append("circle")
+   			   .attr("cx", function(d) {
+   			   		return xScale2(d.Year);
+   			   })
+   			   .attr("cy", function(d) {
+   			   		return yScale2(d.Time);
+   			   })
+   			   .attr("r", function(d) {
+   			   		//return aScale(d[1]);
+               return 2;
+   			   })
+           .attr("fill", "black");
 
         //Create X axis
-   			svg.append("g")
-   				.attr("class", "x axis")
-          .attr("transform", "translate(0," + (h - padding) + ")")
-   				.call(xAxis);
+   			svg2.append("g")
+   				.attr("class", "x axis2")
+          .attr("transform", "translate(0," + (h2 - padding3) + ")")
+   				.call(xAxis2);
 
-        svg.append("g")
-   				.attr("class", "y axis")
-          .attr("transform", "translate(" + padding + ",0)")
-   				.call(yAxis);
+        svg2.append("g")
+   				.attr("class", "y axis2")
+          .attr("transform", "translate(" + padding3 + ",0)")
+   				.call(yAxis2);
 
       });
 
       var CalculateTimeUsed = function(time) {
+        //console.log(time);
         var userTime = hourParser(time);
         var Hours = parseInt(hourFormater(userTime));
         var minutes = parseInt(minuteFormater(userTime));
 
         //console.log(Hours*60+minutes);
         return Hours*60+minutes;
-      }
+      }*/
     </script>
+    </div>
 	</body>
 
 </html>
