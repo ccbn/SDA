@@ -156,7 +156,7 @@
       var h = 300;
       var h2 = 400;
       var numberOfMoth = 12;
-      var padding = 25;
+      var padding = 35;
       var padding2 = 25;
 			var rowC = function(d) {
 				return {a: "he", b: d.hej};
@@ -205,6 +205,9 @@
         //Create the X and Y axises
         CreateYAxis(elements.svg,yScale);
         CreateXAxis(elements.svg,xScale);
+
+        CreateXAxisText1(elements.svg,w,h2 - 50);
+        CreateYAxisText1(elements.svg,w,h2);
         
         //Create title above graph 
         CreateGraphTitle(elements.svg);
@@ -219,7 +222,7 @@
       var GetYScale = function() {
         var yScale = d3.scaleLinear()
 							.domain([0, d3.max(ukpData[0])])
-							.range([h - padding, 0 + padding /*+ (h2 -h)*/]);
+							.range([h - padding - 50, 0 + padding  /*+ (h2 -h)*/]);
         return yScale;
       }
       var CreateYAxis = function(svg,yScale) {
@@ -228,7 +231,7 @@
         svg.select("#graph").append("h1");
         svg.select("#graph").append("g")
    				.attr("class", "y axis")
-          .attr("transform", "translate(" + padding + ",0)")
+          .attr("transform", "translate(" + padding + ", 0)")
    				.call(yAxis);
       }
       var CreateXAxis = function(svg,xScale) {
@@ -236,7 +239,7 @@
           .ticks(12);
           svg.select("#graph").append("g")
    				.attr("class", "x axis")
-          .attr("transform", "translate(0," + (h - padding) + ")")
+          .attr("transform", "translate(0," + (h - padding - 50) + ")")
    				.call(xAxis);
       }
       
@@ -285,7 +288,7 @@
           })
           .attr("width", xScale.bandwidth())
           .attr("height", function(d) {
-            return h - yScale(d) - padding;
+            return h - yScale(d) - padding - 50;
           })
           .attr("fill", function(d) {
             return "rgb(255, 0, 0)";
@@ -304,7 +307,7 @@
                 return w + padding2 + (h/15)+ padding2;	//Bar width of 20 plus 1 for padding
              })
             .attr("y", function(d, i) {
-              return i*padding2*2 +(h -((dataset.length-1)*19 + (dataset.length)*(h/15)))/2 + h/15/2;
+              return i*padding2*2 +(h -((dataset.length-1)*19 + (dataset.length)*(h/15)))/2 + h/15/2 - 50;
             })
             .attr("width", h / 15)
             .attr("height", function(d) {
@@ -325,7 +328,7 @@
                   return yScale(d);
                 })
                 .attr("height", function(d) {
-                  return h - yScale(d) - padding;
+                  return h - yScale(d) - padding - 50;
                 })
                 .attr("fill", function(d) {
                   if(i == 0) {
@@ -350,7 +353,7 @@
               return w + padding2;	//Bar width of 20 plus 1 for padding
            })
           .attr("y", function(d, i) {
-            return i*padding2*2 +(h -((dataset.length-1)*19 + (dataset.length)*(h/15)))/2;
+            return i*padding2*2 +(h -((dataset.length-1)*19 + (dataset.length)*(h/15)))/2 - 50;
           })
           .attr("width", h / 15)
           .attr("height", function(d) {
@@ -381,6 +384,27 @@
         }
         return  ukpArray;
       }
+
+
+    var CreateXAxisText1 = function(svg,w,h) {
+      svg.append("text")
+      .attr("class", "xText label")
+      .attr("text-anchor", "middle")
+      .attr("x", w / 2)
+      .attr("y", h)
+      .text("Months");
+    };
+
+    var CreateYAxisText1 = function(svg,w,h) {
+      svg.append("text")
+      .attr("class", "yText label")
+      .attr("text-anchor", "middle")
+      .attr("y", 0)
+      .attr("x", - h / 2 - 20)
+      .attr("dy", ".75em")
+      .attr("transform", "rotate(-90)")
+      .text("# of Unique kinds of produce");
+    };
     
     var rowConverter2 = function(row) {
       return {
@@ -426,9 +450,7 @@
       CreateGraphLabels2(elements.graphLabels,w,h,xScale,yScale,AtleteData,AtleteDataWomen,elements.svg,elements.graph,padding );
       });
     });
-    var GettimeMinMax = function() {
-      
-    }
+
     var CreateGraphLabels2 = function(graphLabelsElem,w,h,xScale,yScale,dataMen,dataWomen,svg,graph,padding) {
         var gender = ["Men","Women", "Both"];
         graphLabelsElem
