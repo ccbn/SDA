@@ -28,13 +28,11 @@
           stroke: green;
           fill: white;
         }
-
         .line2
         {
           stroke: red;
           fill: white;
         }
-
       </style>
   </head>
   <body>
@@ -185,21 +183,20 @@
       var dataset;
       var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
       var ukpData = [];
-
       //Main function call. Retrieves data from file and runs an ananoymous
       //function that creates the visualizations.
       //The
 			d3.csv("data.csv", rowConverter, function(data) {
         dataset = data;
-
+        
         ukpData = ExtractUKP(dataset); //Extract UKP numbers for each month and produce
-
+        
         //Create scaling objects
-        var xScale = GetXScale();
+        var xScale = GetXScale(); 
         var yScale = GetYScale();
         //Create SVG and group elements for better structure
         var elements = CreateSvgAndGroupElements();
-
+        
         //Create the labels to the right of the graph
         CreateGraphLabelRects(elements.graphLabels);
         CreateGraphLabels(elements.graphLabels,elements.svg,yScale);
@@ -208,8 +205,8 @@
         //Create the X and Y axises
         CreateYAxis(elements.svg,yScale);
         CreateXAxis(elements.svg,xScale);
-
-        //Create title above graph
+        
+        //Create title above graph 
         CreateGraphTitle(elements.svg);
       });
       var GetXScale = function() {
@@ -242,7 +239,7 @@
           .attr("transform", "translate(0," + (h - padding) + ")")
    				.call(xAxis);
       }
-
+      
       var CreateGraphTitle = function(svg) {
         svg.append("g")
         .append("text")
@@ -258,12 +255,12 @@
 						.append("svg")
 						.attr("width", w2)
 						.attr("height", h2);
-
+        
         var graphLabelsElem = svg.append("g")
           .attr("id", "rect")
           .attr("clip-path", "url(#chart-area)")
           .attr("transform", "translate(0, 100)");
-
+        
         var graphElem = svg.append("g")
           .attr("id", "graph")
           .attr("clip-path", "url(#chart-area)")
@@ -384,10 +381,7 @@
         }
         return  ukpArray;
       }
-
-
-
-
+    
     var rowConverter2 = function(row) {
       return {
         Year: parseInt(row.Year),
@@ -396,45 +390,24 @@
         Time: CalculateTimeUsed(row.Time)
       };
     };
-
-    var CurrentGender = "Both";
-
     d3.csv("MaratonMen.csv", rowConverter2, function(data) {
       d3.csv("MaratonWomen.csv", rowConverter2, function(dataWomen) {
-        var w = 500;
-        var h = 300;
-        var w2 = w + 100;
-        var padding = 35;
-
-        var elements = CreateSvgAndGroupElements2(w2,h);
-
-        var AtleteData = GetYearAndTime(data);
-        var AtleteDataWomen = GetYearAndTime(dataWomen);
-
-        var rmax = d3.max(AtleteData, function(d) {
+      var w = 500;
+      var h = 300;
+      var w2 = w + 100;
+      var padding = 35;
+      
+      var elements = CreateSvgAndGroupElements2(w2,h);
+      
+      var AtleteData = GetYearAndTime(data);
+      var AtleteDataWomen = GetYearAndTime(dataWomen);
+      
+      var rmax = d3.max(AtleteData, function(d) {
+        return d[1];
+      });
+      var rmin = d3.min(AtleteData, function(d) {
           return d[1];
-        });
-
-        var rmin = d3.min(AtleteData, function(d) {
-            return d[1];
-        });
-
-
-        var xScale = GetXScale2(AtleteData,w,h,padding);
-        var yScale = GetYScale2(rmin,rmax,h,padding);
-        var rScale = GetRScale(rmax);
-        var aScale = GetAScale(rmax);
-
-        CreateXAxis2(elements.graph,h,padding,xScale);
-        CreateYAxis2(elements.graph,padding,yScale);
-
-        CreateCircles(elements.graph,AtleteData,xScale,yScale);
-        //CreateLines(elements.graph,dataTotal,xScale,yScale,"line");
-        CreateCircles(elements.graph,AtleteDataWomen,xScale,yScale);
-        //CreateLines(elements.graph,dataTotal,xScale,yScale,"line2");
-
-
-
+      });
       
       var xScale = GetXScale2(AtleteData,w,h,padding);
       var yScale = GetYScale2(rmin,rmax,h,padding);
@@ -444,21 +417,20 @@
       CreateXAxis2(elements.graph,h,padding,xScale); 
       CreateYAxis2(elements.graph,padding,yScale); 
       
-      CreateCircles(elements.graph,AtleteDataWomen,xScale,yScale);
+      CreateCircles(elements.graph,AtleteData,xScale,yScale);
+      CreateRects(elements.graph,AtleteDataWomen,xScale,yScale);
 
-      CreateGraphLabels2(elements.graphLabels,w,h,xScale,yScale,AtleteData,AtleteDataWomen,elements.svg);
+      CreateGraphLabels2(elements.graphLabels,w,h,xScale,yScale,AtleteData,AtleteDataWomen,elements.svg,elements.graph);
       });
     });
-
     var GettimeMinMax = function() {
-
+      
     }
-
-    var CreateGraphLabels2 = function(graphLabelsElem,w,h,xScale,yScale,dataMen,dataWomen,svg) {
-        var genders = ["Men","Women", "Both"];
+    var CreateGraphLabels2 = function(graphLabelsElem,w,h,xScale,yScale,dataMen,dataWomen,svg,graph) {
+        var gender = ["Men","Women", "Both"];
         graphLabelsElem
             .selectAll("text")
-            .data(genders)
+            .data(gender)
             .enter()
             .append("text")
             .text(function(d) {
@@ -470,9 +442,15 @@
             .attr("y", function(d, i) {
               return h / 4 * i + h / 4;
             })
+            .attr("fill", function(d,i) {
+              if(i == 1) {
+                return "blue";
+              } else {
+                return "black";
+              }
+            })
             .on("click", function(d,i) {
-
-
+              
             var timeMinMen = d3.min(dataMen, function(d) {
                 return d[1];
             });
@@ -489,30 +467,19 @@
             var timeMinBoth = Math.min(timeMinMen,timeMinWomen);
             var timeMaxBoth = Math.max(timeMaxMen,timeMaxWomen);
 
-            var circles = svg.selectAll('circle').data(dataMen);
-
-              if(genders[i] == "Men") {
+            svg.selectAll('circle').remove();
+            svg.selectAll('rect').remove();
+              if(gender[i] == "Men") {
                 yScale.domain([timeMinMen, timeMaxMen]);
-                /*
-                circles
-                .transition()
-                .duration(200)
-                .attr("cx", function(d) {
-                  return xScale(d[0]);
-                })
-                .attr("cy", function(d) {
-                  return yScale(d[1]);
-                })
-                .attr("r", function(d) {
-                  return 2;
-                });
-                */
-              } else if(genders[i] == "Women") {
-                
+                CreateCircles(graph,dataMen,xScale,yScale);
+              } else if(gender[i] == "Women") {
                 yScale.domain([timeMinWomen, timeMaxWomen]);
-                
+                CreateRects(graph,dataWomen,xScale,yScale);
               } else {
                 yScale.domain([timeMinBoth, timeMaxBoth]);
+                
+                CreateRects(graph,dataWomen,xScale,yScale);
+                CreateCircles(graph,dataMen,xScale,yScale);
               }
 
               yAxis = d3.axisLeft(yScale).ticks(10);
@@ -520,26 +487,27 @@
               .transition()
               .duration(1000)
               .call(yAxis);
+
+
+
               
+
             });
     };
-
     var CreateSvgAndGroupElements2 = function(w,h) {
         var svg = d3.select("body")
 						.append("svg")
 						.attr("width", w)
 						.attr("height", h);
-
+        
         var graphLabelsElem = svg.append("g");
         var graphElem = svg.append("g");
-
           return {
             svg: svg,
             graphLabels: graphLabelsElem,
             graph: graphElem
           };
         }
-
     var CreateClipPath = function(svg,w,h,padding) {
       svg.append("clipPath")
           .attr("id", "chart-area")
@@ -548,17 +516,18 @@
           .attr("y", padding)
           .attr("width", w - padding)
           .attr("height", h - padding);
-
     }
-
     var CreateCircles = function(svg,AtleteData,xScale,yScale) {
       //Create circles
       svg.append("g")
+          .attr("id", "circles")
           .attr("clip-path", "url(#chart-area)")
           .selectAll("circle")
           .data(AtleteData)
           .enter()
           .append("circle")
+          .transition()
+          .duration(500)
           .attr("cx", function(d) {
             return xScale(d[0]);
           })
@@ -570,67 +539,55 @@
           });
     }
 
-
-    var CreateLines = function(svg,AtleteData,xScale,yScale,classname) {
-      if(classname == "line") {
-        var line = d3.line()
-              .defined(function(d) {
-                //console.log(d);
-                return d.Index < 121; })
-              .x(function(d) { return xScale(d.Year); })
-              .y(function(d) { return yScale(d.Time); });
-      }else {
-        console.log("i am here");
-        var line = d3.line()
-              .defined(function(d) { return d.Index > 120; })
-              .x(function(d) { return xScale(d.Year); })
-              .y(function(d) { return yScale(d.Time); });
-      }
-
-
+    var CreateRects = function(svg,AtleteData,xScale,yScale) {
+      //Create rects
       svg.append("g")
-        .datum(AtleteData)
-        .attr("class", classname)
-        .attr("d", line);
-
+          .selectAll("rect")
+          .data(AtleteData)
+          .enter()
+          .append("rect")
+          .transition()
+          .duration(500)
+          .attr("x", function(d) {
+            return xScale(d[0]);
+          })
+          .attr("y", function(d) {
+            return yScale(d[1]);
+          })
+          .attr("width", 4)
+          .attr("height", 4)
+          .attr("fill", "blue");
     }
-
-
+    
     var CreateYAxis2 = function(svg,padding,yScale) {
       var yAxis = d3.axisLeft(yScale)
           .ticks(10);
-
       svg.append("g")
    				.attr("class", "y2 axis")
           .attr("transform", "translate(" + padding + ",0)")
    				.call(yAxis);
     }
-
     var CreateXAxis2 = function(svg,h,padding,xScale) {
       var xAxis = d3.axisBottom(xScale)
           .ticks(10)
           .tickFormat(d3.format("d"));
-
       svg.append("g")
    				.attr("class", "x axis")
           .attr("transform", "translate(0," + (h - padding) + ")")
    				.call(xAxis);
     };
-
     var GetAScale = function(rmax) {
       var aScale = d3.scaleSqrt()
           .domain([0, rmax])
           .range([0, 10]);
       return aScale;
     };
-
     var GetRScale = function(rmax) {
       var rScale = d3.scaleLinear()
           .domain([0, rmax])
           .range([2, 5]);
       return rScale;
     };
-
     var GetXScale2 = function(AtleteData,w,h,padding) {
       var xScale = d3.scaleLinear()
         .domain([d3.min(AtleteData, function(d) {
@@ -641,47 +598,24 @@
         .range([padding, w - padding*2]);
       return xScale;
     }
-
     var GetYScale2 = function(rmin,rmax,h,padding) {
       var yScale = d3.scaleLinear()
           .domain([rmin, rmax])
           .range([h - padding, padding]);
-
+      
       return yScale;
     }
-
     var formatTime = d3.timeFormat("%Y");
     var hourParser = d3.timeParse("%H:%M:%S");
-    var hourParser2 = d3.timeParse("%H.%M.%S");
     var hourFormater = d3.timeFormat("%H");
     var minuteFormater = d3.timeFormat("%M");
-
     var CalculateTimeUsed = function(time) {
         var userTime = hourParser(time);
         var Hours = parseInt(hourFormater(userTime));
         var minutes = parseInt(minuteFormater(userTime));
-
         //console.log(Hours*60+minutes);
         return Hours*60+minutes;
     }
-
-    var CalculateTimeUsed2 = function(time) {
-        var userTime = hourParser2(time);
-        var Hours = parseInt(hourFormater(userTime));
-        var minutes = parseInt(minuteFormater(userTime));
-
-        //console.log(Hours*60+minutes);
-        return Hours*60+minutes;
-    }
-
-    var GetSVG = function() {
-      var svg = d3.select("body")
-						.append("svg")
-						.attr("width", w2)
-						.attr("height", h2);
-      return svg;
-    }
-
     var GetYearAndTime = function(data) {
       var AtleteData = [];
       for (var i = 0; i < data.length-1; i++) {
@@ -689,15 +623,6 @@
       }
       return AtleteData;
     }
-
-    var GetYearAndTime2 = function(data) {
-      var AtleteData = [];
-
-    }
-
-
-  
-
     </script>
 
 
@@ -706,11 +631,6 @@
       we could quantify how delicious the produce is…</p>
     <p class="p-custom">Data from: <a href="http://www.grownyc.org/greenmarket/whatsavailable">
       http://www.grownyc.org/greenmarket/whatsavailable</a></p>
-    </div>
-
-    <div id = Part4>
-      <h2>Part 4: Viz 2</h2>
-    </div>
 
 	</body>
 
