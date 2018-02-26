@@ -191,15 +191,15 @@
       //The
 			d3.csv("data.csv", rowConverter, function(data) {
         dataset = data;
-        
+
         ukpData = ExtractUKP(dataset); //Extract UKP numbers for each month and produce
-        
+
         //Create scaling objects
-        var xScale = GetXScale(); 
+        var xScale = GetXScale();
         var yScale = GetYScale();
         //Create SVG and group elements for better structure
         var elements = CreateSvgAndGroupElements();
-        
+
         //Create the labels to the right of the graph
         CreateGraphLabelRects(elements.graphLabels);
         CreateGraphLabels(elements.graphLabels,elements.svg,yScale);
@@ -208,8 +208,8 @@
         //Create the X and Y axises
         CreateYAxis(elements.svg,yScale);
         CreateXAxis(elements.svg,xScale);
-        
-        //Create title above graph 
+
+        //Create title above graph
         CreateGraphTitle(elements.svg);
       });
       var GetXScale = function() {
@@ -242,7 +242,7 @@
           .attr("transform", "translate(0," + (h - padding) + ")")
    				.call(xAxis);
       }
-      
+
       var CreateGraphTitle = function(svg) {
         svg.append("g")
         .append("text")
@@ -258,12 +258,12 @@
 						.append("svg")
 						.attr("width", w2)
 						.attr("height", h2);
-        
+
         var graphLabelsElem = svg.append("g")
           .attr("id", "rect")
           .attr("clip-path", "url(#chart-area)")
           .attr("transform", "translate(0, 100)");
-        
+
         var graphElem = svg.append("g")
           .attr("id", "graph")
           .attr("clip-path", "url(#chart-area)")
@@ -385,7 +385,7 @@
         return  ukpArray;
       }
 
-    
+
 
 
     var rowConverter2 = function(row) {
@@ -397,44 +397,61 @@
       };
     };
 
+    var rowConverter3 = function(row) {
+      return {
+        Index: parseInt(row.Index),
+        Year: parseInt(row.Year),
+        Athlete: row.Athlete,
+        Country_State: row.Country_State,
+        Time: CalculateTimeUsed2(row.Time)
+      };
+    };
+
     d3.csv("MaratonMen.csv", rowConverter2, function(data) {
       d3.csv("MaratonWomen.csv", rowConverter2, function(dataWomen) {
-      var w = 500;
-      var h = 300;
-      var w2 = w + 100;
-      var padding = 35;
-      
-      var elements = CreateSvgAndGroupElements2(w2,h);
-      
-      var AtleteData = GetYearAndTime(data);
-      var AtleteDataWomen = GetYearAndTime(dataWomen);
-      
-      var rmax = d3.max(AtleteData, function(d) {
-        return d[1];
-      });
+        d3.csv("Maraton2.csv", rowConverter3, function(dataTotal) {
+          console.log(dataTotal);
+        var w = 500;
+        var h = 300;
+        var w2 = w + 100;
+        var padding = 35;
 
-      var rmin = d3.min(AtleteData, function(d) {
+        var elements = CreateSvgAndGroupElements2(w2,h);
+
+        var AtleteData = GetYearAndTime(data);
+        var AtleteDataWomen = GetYearAndTime(dataWomen);
+
+        var rmax = d3.max(AtleteData, function(d) {
           return d[1];
-      });
+        });
 
-      
-      var xScale = GetXScale2(AtleteData,w,h,padding);
-      var yScale = GetYScale2(rmin,rmax,h,padding);
-      var rScale = GetRScale(rmax);
-      var aScale = GetAScale(rmax);
-      
-      CreateXAxis2(elements.graph,h,padding,xScale); 
-      CreateYAxis2(elements.graph,padding,yScale); 
-      
-      CreateCircles(elements.graph,AtleteData,xScale,yScale);
-      CreateCircles(elements.graph,AtleteDataWomen,xScale,yScale);
+        var rmin = d3.min(AtleteData, function(d) {
+            return d[1];
+        });
 
-      CreateGraphLabels2(elements.graphLabels,w,h,yScale,AtleteData,AtleteDataWomen);
+
+        var xScale = GetXScale2(AtleteData,w,h,padding);
+        var yScale = GetYScale2(rmin,rmax,h,padding);
+        var rScale = GetRScale(rmax);
+        var aScale = GetAScale(rmax);
+
+        CreateXAxis2(elements.graph,h,padding,xScale);
+        CreateYAxis2(elements.graph,padding,yScale);
+
+        CreateCircles(elements.graph,AtleteData,xScale,yScale);
+        CreateLines(elements.graph,dataTotal,xScale,yScale,"line");
+        CreateCircles(elements.graph,AtleteDataWomen,xScale,yScale);
+        CreateLines(elements.graph,dataTotal,xScale,yScale,"line2");
+
+
+
+        CreateGraphLabels2(elements.graphLabels,w,h,yScale,AtleteData,AtleteDataWomen);
+        });
       });
     });
 
     var GettimeMinMax = function() {
-      
+
     }
 
     var CreateGraphLabels2 = function(graphLabelsElem,w,h,yScale,dataMen,dataWomen,rmin,rmax) {
@@ -461,7 +478,7 @@
               } else {
                 yScale.domain([0, d3.max(ukpData[i])])
               }
-              
+
               d3.axisLeft(yScale).ticks(5);
             });
     };
@@ -471,7 +488,7 @@
 						.append("svg")
 						.attr("width", w)
 						.attr("height", h);
-        
+
         var graphLabelsElem = svg.append("g");
         var graphElem = svg.append("g");
 
@@ -513,7 +530,32 @@
           });
     }
 
-    
+
+    var CreateLines = function(svg,AtleteData,xScale,yScale,classname) {
+      if(classname == "line") {
+        var line = d3.line()
+              .defined(function(d) {
+                //console.log(d);
+                return d.Index < 121; })
+              .x(function(d) { return xScale(d.Year); })
+              .y(function(d) { return yScale(d.Time); });
+      }else {
+        console.log("i am here");
+        var line = d3.line()
+              .defined(function(d) { return d.Index > 120; })
+              .x(function(d) { return xScale(d.Year); })
+              .y(function(d) { return yScale(d.Time); });
+      }
+
+
+      svg.append("g")
+        .datum(AtleteData)
+        .attr("class", classname)
+        .attr("d", line);
+
+    }
+
+
     var CreateYAxis2 = function(svg,padding,yScale) {
       var yAxis = d3.axisLeft(yScale)
           .ticks(10);
@@ -564,17 +606,27 @@
       var yScale = d3.scaleLinear()
           .domain([rmin, rmax])
           .range([h - padding, padding]);
-      
+
       return yScale;
     }
 
     var formatTime = d3.timeFormat("%Y");
     var hourParser = d3.timeParse("%H:%M:%S");
+    var hourParser2 = d3.timeParse("%H.%M.%S");
     var hourFormater = d3.timeFormat("%H");
     var minuteFormater = d3.timeFormat("%M");
 
     var CalculateTimeUsed = function(time) {
         var userTime = hourParser(time);
+        var Hours = parseInt(hourFormater(userTime));
+        var minutes = parseInt(minuteFormater(userTime));
+
+        //console.log(Hours*60+minutes);
+        return Hours*60+minutes;
+    }
+
+    var CalculateTimeUsed2 = function(time) {
+        var userTime = hourParser2(time);
         var Hours = parseInt(hourFormater(userTime));
         var minutes = parseInt(minuteFormater(userTime));
 
@@ -598,6 +650,11 @@
       return AtleteData;
     }
 
+    var GetYearAndTime2 = function(data) {
+      var AtleteData = [];
+
+    }
+
 
 
 
@@ -609,6 +666,11 @@
       we could quantify how delicious the produce is…</p>
     <p class="p-custom">Data from: <a href="http://www.grownyc.org/greenmarket/whatsavailable">
       http://www.grownyc.org/greenmarket/whatsavailable</a></p>
+    </div>
+
+    <div id = Part4>
+      <h2>Part 4: Viz 2</h2>
+    </div>
 
 	</body>
 
