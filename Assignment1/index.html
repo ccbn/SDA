@@ -395,14 +395,14 @@
       var w = 500;
       var h = 300;
       var w2 = w + 100;
-      var padding = 35;
+      var padding = 45;
       
       var elements = CreateSvgAndGroupElements2(w2,h);
       
       var AtleteData = GetYearAndTime(data);
       var AtleteDataWomen = GetYearAndTime(dataWomen);
       
-      var rmax = d3.max(AtleteData, function(d) {
+      var rmax = d3.max(AtleteDataWomen, function(d) {
         return d[1];
       });
       var rmin = d3.min(AtleteData, function(d) {
@@ -420,13 +420,16 @@
       CreateCircles(elements.graph,AtleteData,xScale,yScale);
       CreateRects(elements.graph,AtleteDataWomen,xScale,yScale);
 
-      CreateGraphLabels2(elements.graphLabels,w,h,xScale,yScale,AtleteData,AtleteDataWomen,elements.svg,elements.graph);
+      CreateXAxisText(elements.svg,w,h);
+      CreateYAxisText(elements.svg,w,h)
+
+      CreateGraphLabels2(elements.graphLabels,w,h,xScale,yScale,AtleteData,AtleteDataWomen,elements.svg,elements.graph,padding );
       });
     });
     var GettimeMinMax = function() {
       
     }
-    var CreateGraphLabels2 = function(graphLabelsElem,w,h,xScale,yScale,dataMen,dataWomen,svg,graph) {
+    var CreateGraphLabels2 = function(graphLabelsElem,w,h,xScale,yScale,dataMen,dataWomen,svg,graph,padding) {
         var gender = ["Men","Women", "Both"];
         graphLabelsElem
             .selectAll("text")
@@ -437,7 +440,7 @@
               return d;
             })
             .attr("x", function(d, i) {
-                return w;	//Bar width of 20 plus 1 for padding
+                return w - padding * 1.5;	//Bar width of 20 plus 1 for padding
              })
             .attr("y", function(d, i) {
               return h / 4 * i + h / 4;
@@ -494,6 +497,27 @@
 
             });
     };
+
+    var CreateXAxisText = function(svg,w,h) {
+      svg.append("text")
+      .attr("class", "xText label")
+      .attr("text-anchor", "end")
+      .attr("x", w / 2)
+      .attr("y", h)
+      .text("Years");
+    };
+
+    var CreateYAxisText = function(svg,w,h) {
+      svg.append("text")
+      .attr("class", "yText label")
+      .attr("text-anchor", "middle")
+      .attr("y", 0)
+      .attr("x", -h / 2)
+      .attr("dy", ".75em")
+      .attr("transform", "rotate(-90)")
+      .text("Running time in minutes");
+    };
+
     var CreateSvgAndGroupElements2 = function(w,h) {
         var svg = d3.select("body")
 						.append("svg")
