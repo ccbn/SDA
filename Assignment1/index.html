@@ -25,13 +25,13 @@
         }
         .line
         {
-          stroke: green;
-          fill: white;
+          stroke: black;
+          /*fill: white;*/
         }
         .line2
         {
-          stroke: red;
-          fill: white;
+          stroke: blue;
+          /*fill: white;*/
         }
       </style>
   </head>
@@ -188,15 +188,15 @@
       //The
 			d3.csv("data.csv", rowConverter, function(data) {
         dataset = data;
-        
+
         ukpData = ExtractUKP(dataset); //Extract UKP numbers for each month and produce
-        
+
         //Create scaling objects
-        var xScale = GetXScale(); 
+        var xScale = GetXScale();
         var yScale = GetYScale();
         //Create SVG and group elements for better structure
         var elements = CreateSvgAndGroupElements();
-        
+
         //Create the labels to the right of the graph
         CreateGraphLabelRects(elements.graphLabels);
         CreateGraphLabels(elements.graphLabels,elements.svg,yScale);
@@ -205,8 +205,8 @@
         //Create the X and Y axises
         CreateYAxis(elements.svg,yScale);
         CreateXAxis(elements.svg,xScale);
-        
-        //Create title above graph 
+
+        //Create title above graph
         CreateGraphTitle(elements.svg);
       });
       var GetXScale = function() {
@@ -239,7 +239,7 @@
           .attr("transform", "translate(0," + (h - padding) + ")")
    				.call(xAxis);
       }
-      
+
       var CreateGraphTitle = function(svg) {
         svg.append("g")
         .append("text")
@@ -255,12 +255,12 @@
 						.append("svg")
 						.attr("width", w2)
 						.attr("height", h2);
-        
+
         var graphLabelsElem = svg.append("g")
           .attr("id", "rect")
           .attr("clip-path", "url(#chart-area)")
           .attr("transform", "translate(0, 100)");
-        
+
         var graphElem = svg.append("g")
           .attr("id", "graph")
           .attr("clip-path", "url(#chart-area)")
@@ -381,55 +381,66 @@
         }
         return  ukpArray;
       }
-    
+
     var rowConverter2 = function(row) {
       return {
         Year: parseInt(row.Year),
         Athlete: row.Athlete,
         Country_State: row.Country_State,
-        Time: CalculateTimeUsed(row.Time)
+        Time: CalculateTimeUsed(row.Time),
+        Line: parseFloat(row.Line)
       };
     };
     d3.csv("MaratonMen.csv", rowConverter2, function(data) {
-      d3.csv("MaratonWomen.csv", rowConverter2, function(dataWomen) {
+      d3.csv("MaratonWomen2.csv", rowConverter2, function(dataWomen) {
+        //console.log(dataWomen);
       var w = 500;
       var h = 300;
       var w2 = w + 100;
       var padding = 45;
-      
+
+      var line = d3.line()
+            .x(function(d) {
+              //console.log(d);
+              return xScale(d[0]); })
+            .y(function(d) { return yScale(d[2]); });
+
       var elements = CreateSvgAndGroupElements2(w2,h);
-      
+
       var AtleteData = GetYearAndTime(data);
       var AtleteDataWomen = GetYearAndTime(dataWomen);
-      
+
       var rmax = d3.max(AtleteDataWomen, function(d) {
         return d[1];
       });
       var rmin = d3.min(AtleteData, function(d) {
           return d[1];
       });
-      
+
       var xScale = GetXScale2(AtleteData,w,h,padding);
       var yScale = GetYScale2(rmin,rmax,h,padding);
       var rScale = GetRScale(rmax);
       var aScale = GetAScale(rmax);
-      
-      CreateXAxis2(elements.graph,h,padding,xScale); 
-      CreateYAxis2(elements.graph,padding,yScale); 
-      
+
+      CreateXAxis2(elements.graph,h,padding,xScale);
+      CreateYAxis2(elements.graph,padding,yScale);
+
       CreateCircles(elements.graph,AtleteData,xScale,yScale);
       CreateRects(elements.graph,AtleteDataWomen,xScale,yScale);
+
+      CreateLine(elements.graph, AtleteData, line, "line");
+      CreateLine(elements.graph, AtleteDataWomen, line, "line2");
 
       CreateXAxisText(elements.svg,w,h);
       CreateYAxisText(elements.svg,w,h)
 
-      CreateGraphLabels2(elements.graphLabels,w,h,xScale,yScale,AtleteData,AtleteDataWomen,elements.svg,elements.graph,padding );
+      CreateGraphLabels2(elements.graphLabels,w,h,xScale,yScale,AtleteData,AtleteDataWomen,elements.svg,elements.graph,padding,line );
       });
     });
     var GettimeMinMax = function() {
-      
+
     }
-    var CreateGraphLabels2 = function(graphLabelsElem,w,h,xScale,yScale,dataMen,dataWomen,svg,graph,padding) {
+    var CreateGraphLabels2 = function(graphLabelsElem,w,h,xScale,yScale,dataMen,dataWomen,svg,graph,padding,line) {
         var gender = ["Men","Women", "Both"];
         graphLabelsElem
             .selectAll("text")
@@ -453,7 +464,7 @@
               }
             })
             .on("click", function(d,i) {
-              
+
             var timeMinMen = d3.min(dataMen, function(d) {
                 return d[1];
             });
@@ -462,7 +473,7 @@
             });
             var timeMinWomen = d3.min(dataWomen, function(d) {
                 return d[1];
-            });
+            }) - 5;
             var timeMaxWomen = d3.max(dataWomen, function(d) {
                 return d[1];
             });
@@ -472,17 +483,23 @@
 
             svg.selectAll('circle').remove();
             svg.selectAll('rect').remove();
+            svg.selectAll('.line').remove();
+            svg.selectAll('.line2').remove();
               if(gender[i] == "Men") {
                 yScale.domain([timeMinMen, timeMaxMen]);
                 CreateCircles(graph,dataMen,xScale,yScale);
+                CreateLine(graph, dataMen, line, "line");
               } else if(gender[i] == "Women") {
                 yScale.domain([timeMinWomen, timeMaxWomen]);
                 CreateRects(graph,dataWomen,xScale,yScale);
+                CreateLine(graph, dataWomen, line, "line2");
               } else {
                 yScale.domain([timeMinBoth, timeMaxBoth]);
-                
+
                 CreateRects(graph,dataWomen,xScale,yScale);
                 CreateCircles(graph,dataMen,xScale,yScale);
+                CreateLine(graph, dataMen, line, "line");
+                CreateLine(graph, dataWomen, line, "line2");
               }
 
               yAxis = d3.axisLeft(yScale).ticks(10);
@@ -493,7 +510,7 @@
 
 
 
-              
+
 
             });
     };
@@ -523,7 +540,7 @@
 						.append("svg")
 						.attr("width", w)
 						.attr("height", h);
-        
+
         var graphLabelsElem = svg.append("g");
         var graphElem = svg.append("g");
           return {
@@ -563,6 +580,25 @@
           });
     }
 
+    var CreateLine = function(svg, AtleteData, line, className) {
+      if(className == "line") {
+        svg.append("path")
+          .datum(AtleteData)
+          .transition()
+          .duration(500)
+          .attr("class", className)
+          .attr("d", line);
+      }else {
+        svg.append("path")
+          .datum(AtleteData)
+          .transition()
+          .duration(500)
+          .attr("class", className)
+          .attr("d", line);
+      }
+
+    }
+
     var CreateRects = function(svg,AtleteData,xScale,yScale) {
       //Create rects
       svg.append("g")
@@ -582,7 +618,7 @@
           .attr("height", 4)
           .attr("fill", "blue");
     }
-    
+
     var CreateYAxis2 = function(svg,padding,yScale) {
       var yAxis = d3.axisLeft(yScale)
           .ticks(10);
@@ -626,7 +662,7 @@
       var yScale = d3.scaleLinear()
           .domain([rmin, rmax])
           .range([h - padding, padding]);
-      
+
       return yScale;
     }
     var formatTime = d3.timeFormat("%Y");
@@ -643,7 +679,7 @@
     var GetYearAndTime = function(data) {
       var AtleteData = [];
       for (var i = 0; i < data.length-1; i++) {
-        AtleteData.push([data[i].Year, data[i].Time]);					//Add new number to array
+        AtleteData.push([data[i].Year, data[i].Time, data[i].Line]);					//Add new number to array
       }
       return AtleteData;
     }
