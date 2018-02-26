@@ -26,12 +26,12 @@
         .line
         {
           stroke: black;
-          /*fill: white;*/
+          fill: none;
         }
         .line2
         {
           stroke: blue;
-          /*fill: white;*/
+          fill: none;
         }
 
         #tooltip {
@@ -52,7 +52,7 @@
         #tooltip.hidden {
 				display: none;
         }
-        
+
         #tooltip p {
           margin: 0;
           font-family: sans-serif;
@@ -235,8 +235,8 @@
 
         CreateXAxisText1(elements.svg,w,h2 - 50);
         CreateYAxisText1(elements.svg,w,h2);
-        
-        //Create title above graph 
+
+        //Create title above graph
         CreateGraphTitle(elements.svg);
       });
       var GetXScale = function() {
@@ -432,7 +432,7 @@
       .attr("transform", "rotate(-90)")
       .text("# of Unique kinds of produce");
     };
-    
+
     var rowConverter2 = function(row) {
       return {
         Year: parseInt(row.Year),
@@ -452,7 +452,12 @@
       var line = d3.line()
             .x(function(d) {
               return xScale(d[0]); })
-            .y(function(d) { return yScale(d[2]); });
+            .y(function(d) { return yScale(d[2]); })
+
+      var line2 = d3.line()
+            .x(function(d) {
+              return xScale(d[0]); })
+            .y(function(d) { return yScale(d[1]); });
 
       var elements = CreateSvgAndGroupElements2(w2,h);
 
@@ -477,17 +482,57 @@
       CreateCircles(elements.graph,AtleteData,xScale,yScale);
       CreateRects(elements.graph,AtleteDataWomen,xScale,yScale);
 
-      CreateLine(elements.graph, AtleteData, line, "line");
-      CreateLine(elements.graph, AtleteDataWomen, line, "line2");
+      //new lines beswine dots
+      var line1 = CreateLine(elements.graph, AtleteData, lineFuntion(xScale,yScale,"line2"), "line");
+      animation(line1);
+      var line2 = CreateLine(elements.graph, AtleteDataWomen, lineFuntion(xScale,yScale,"line2"), "line2");
+      animation(line2);
+
+
+      var line3 = CreateLine(elements.graph, AtleteData, lineFuntion(xScale,yScale,"line"), "line");
+      animation(line3);
+      var line4 = CreateLine(elements.graph, AtleteDataWomen, lineFuntion(xScale,yScale,"line"), "line2");
+      animation(line4);
 
       CreateXAxisText(elements.svg,w,h);
       CreateYAxisText(elements.svg,w,h)
 
-      CreateGraphLabels2(elements.graphLabels,w,h,xScale,yScale,AtleteData,AtleteDataWomen,elements.svg,elements.graph,padding,line );
+      CreateGraphLabels2(elements.graphLabels,w,h,xScale,yScale,AtleteData,AtleteDataWomen,elements.svg,elements.graph,padding);
       });
     });
 
-    var CreateGraphLabels2 = function(graphLabelsElem,w,h,xScale,yScale,dataMen,dataWomen,svg,graph,padding,line) {
+    var animation = function(path) {
+      var totalLength = path.node().getTotalLength();
+      path
+      	.attr("stroke-dasharray", totalLength + " " + totalLength)
+      	.attr("stroke-dashoffset", totalLength)
+        .transition() // Call Transition Method
+        .delay(500)
+      	.duration(2000) // Set Duration timing (ms)
+      	.ease(d3.easeLinear) // Set Easing option
+      	.attr("stroke-dashoffset", 0); // Set final value of dash-offset for transition
+    }
+
+    var lineFuntion = function(xScale,yScale,name) {
+      var line;
+      if(name == "line") {
+        line = d3.line()
+              .x(function(d) {
+                return xScale(d[0]); })
+              .y(function(d) { return yScale(d[2]); })
+      }else {
+        line = d3.line()
+              .x(function(d) {
+                return xScale(d[0]); })
+              .y(function(d) { return yScale(d[1]); });
+      }
+      return line
+
+
+
+    }
+
+    var CreateGraphLabels2 = function(graphLabelsElem,w,h,xScale,yScale,dataMen,dataWomen,svg,graph,padding) {
         var gender = ["Men","Women", "Both"];
         graphLabelsElem
             .selectAll("text")
@@ -552,19 +597,32 @@
                 yScale.domain([timeMinMen, timeMaxMen]);
                 xScale.domain([YearMinMen, YearMaxMen]);
                 CreateCircles(graph,dataMen,xScale,yScale);
-                CreateLine(graph, dataMen, line, "line");
+                var line1 = CreateLine(graph, dataMen, lineFuntion(xScale,yScale,"line2"), "line");
+                animation(line1);
+                var line2 = CreateLine(graph, dataMen, lineFuntion(xScale,yScale,"line"), "line");
+                animation(line2);
+
               } else if(gender[i] == "Women") {
                 yScale.domain([timeMinWomen, timeMaxWomen]);
                 xScale.domain([YearMinWomen, YearMaxWomen]);
                 CreateRects(graph,dataWomen,xScale,yScale);
-                CreateLine(graph, dataWomen, line, "line2");
+                var line1 = CreateLine(graph, dataWomen, lineFuntion(xScale,yScale,"line2"), "line2");
+                animation(line1);
+                var line2 = CreateLine(graph, dataWomen, lineFuntion(xScale,yScale,"line"), "line2");
+                animation(line2);
               } else {
                 yScale.domain([timeMinBoth, timeMaxBoth]);
                 xScale.domain([YearMinBoth, YearMaxBoth]);
-                CreateRects(graph,dataWomen,xScale,yScale); 
+                CreateRects(graph,dataWomen,xScale,yScale);
                 CreateCircles(graph,dataMen,xScale,yScale);
-                CreateLine(graph, dataMen, line, "line");
-                CreateLine(graph, dataWomen, line, "line2");
+                var line1 = CreateLine(graph, dataMen, lineFuntion(xScale,yScale,"line2"), "line");
+                animation(line1);
+                var line2 = CreateLine(graph, dataWomen, lineFuntion(xScale,yScale,"line2"), "line2");
+                animation(line2);
+                var line3 = CreateLine(graph, dataMen, lineFuntion(xScale,yScale,"line"), "line");
+                animation(line3);
+                var line4 = CreateLine(graph, dataWomen, lineFuntion(xScale,yScale,"line"), "line2");
+                animation(line4);
               }
 
               yAxis = d3.axisLeft(yScale).ticks(10);
@@ -646,7 +704,7 @@
           //Update the tooltip position and value
           d3.select("#tooltip")
             .style("left", xPosition + "px")
-            .style("top", yPosition + "px")						
+            .style("top", yPosition + "px")
             .select("#value")
             .text("Year: " + d[0] + ", Time: " + d[1]);
 
@@ -668,24 +726,20 @@
           .attr("r", function(d) {
             return 2;
           });
-          
+
     }
 
     var CreateLine = function(svg, AtleteData, line, className) {
       if(className == "line") {
-        svg.append("path")
+        return svg.append("path")
           .datum(AtleteData)
-          .transition()
-          .duration(500)
           .attr("class", className)
-          .attr("d", line);
+          .attr("d", line)
       }else {
-        svg.append("path")
+        return svg.append("path")
           .datum(AtleteData)
-          .transition()
-          .duration(1000)
           .attr("class", className)
-          .attr("d", line);
+          .attr("d", line)
       }
 
     }
@@ -705,7 +759,7 @@
           //Update the tooltip position and value
           d3.select("#tooltip")
             .style("left", xPosition + "px")
-            .style("top", yPosition + "px")						
+            .style("top", yPosition + "px")
             .select("#value")
             .text("Year: " + d[0] + ", Time: " + d[1]);
 
@@ -727,7 +781,7 @@
           .attr("width", 4)
           .attr("height", 4)
           .attr("fill", "blue")
-          
+
     }
 
     var CreateYAxis2 = function(svg,padding,yScale) {
@@ -812,8 +866,10 @@
             <p><span id="value">100</span></p>
           </div>
       </div>
-  
-    
+      <h3>Do you see the same trends as in the data used in the book?</h3>
+      <p>No We do not se the same trends as in the book</p>
+
+
 	</body>
 
 </html>
