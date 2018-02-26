@@ -1,55 +1,55 @@
-Year,Athlete,Country/State,Time,Notes
-1966,Bobbi Gibb,United States (MA),3:21:40,(unsanctioned)[4]
-1967,Bobbi Gibb,United States (CA),3:27:17,(unsanctioned) 2nd victory[4]
-1968,Bobbi Gibb,United States (CA),3:30:00,(unsanctioned) 3rd victory[4]
-1969,Sara Mae Berman,United States (MA),3:22:46,(unsanctioned)[4]
-1970,Sara Mae Berman,United States (MA),3:05:07,(unsanctioned) 2nd victory[4]
-1971,Sara Mae Berman,United States (MA),3:08:30,(unsanctioned) 3rd victory[4]
-1972,Nina Kuscsik,United States (NY),3:10:26,first year that women were officially sanctioned
-1973,Jacqueline Hansen,United States (CA),3:05:59,
-1974,Miki Gorman,United States (CA),2:47:11,
-1975,Liane Winter,West Germany,2:42:24,
-1976,Kim Merritt,United States (WI),2:47:10,
-1977,Miki Gorman,United States (CA),2:48:33,2nd victory
-1978,Gayle Barron,United States (GA),2:44:52,
-1979,Joan Benoit,United States (ME),2:35:15,
-1980,Jacqueline Gareau,Canada,2:34:28,[5]
-1981,Allison Roe,New Zealand,2:26:46,
-1982,Charlotte Teske,West Germany,2:29:33,
-1983,Joan Benoit,United States (ME),2:22:43,2nd victory
-1984,Lorraine Moller,New Zealand,2:29:28,
-1985,Lisa Larsen Weidenbach,United States (MI),2:34:06,
-1986,Ingrid Kristiansen,Norway,2:24:55,
-1987,Rosa Mota,Portugal,2:25:21,
-1988,Rosa Mota,Portugal,2:24:30,2nd victory
-1989,Ingrid Kristiansen,Norway,2:24:33,2nd victory
-1990,Rosa Mota,Portugal,2:25:24,3rd victory
-1991,Wanda Panfil,Poland,2:24:18,
-1992,Olga Markova,Russia,2:23:43,
-1993,Olga Markova,Russia,2:25:27,2nd victory
-1994,Uta Pippig,Germany,2:21:45,
-1995,Uta Pippig,Germany,2:25:11,2nd victory
-1996,Uta Pippig,Germany,2:27:12,3rd victory
-1997,Fatuma Roba,Ethiopia,2:26:23,
-1998,Fatuma Roba,Ethiopia,2:23:21,2nd victory
-1999,Fatuma Roba,Ethiopia,2:23:25,3rd victory
-2000,Catherine Ndereba,Kenya,2:26:11,
-2001,Catherine Ndereba,Kenya,2:23:53,2nd victory
-2002,Margaret Okayo,Kenya,2:20:43,
-2003,Svetlana Zakharova,Russia,2:25:19,
-2004,Catherine Ndereba,Kenya,2:24:27,3rd victory
-2005,Catherine Ndereba,Kenya,2:25:12,4th victory
-2006,Rita Jeptoo,Kenya,2:23:38,
-2007,Lidiya Grigoryeva,Russia,2:29:18,
-2008,Dire Tune,Ethiopia,2:25:25,2 seconds ahead of 2nd-place finisher
-2009,Salina Kosgei,Kenya,2:32:16,1 second ahead of 2nd-place finisher
-2010,Teyba Erkesso,Ethiopia,2:26:11,3 seconds ahead of 2nd-place finisher
-2011,Caroline Kilel,Kenya,2:22:36,2 seconds ahead of 2nd-place finisher
-2012,Sharon Cherop,Kenya,2:31:50,2 seconds ahead of 2nd-place finisher
-2013,Rita Jeptoo,Kenya,2:26:25,2nd victory
-2014,Rita Jeptoo,Kenya,2:18:57,"Course record, later disqualified[6]"
-2014,Bizunesh Deba,Ethiopia,2:19:59,
-2015,Caroline Rotich,Kenya,2:24:55,
-2016,Atsede Baysa,Ethiopia,2:29:19,
-2017,Edna Kiplagat,Kenya,2:21:52,
-2018,TBD,TBD,TBD,
+Year,Athlete,Country/State,Time,Notes,Line
+1966,Bobbi Gibb,United States (MA),03:21:40,(unsanctioned)[4],179.1138
+1967,Bobbi Gibb,United States (CA),03:27:17,(unsanctioned) 2nd victory[4],178.1781
+1968,Bobbi Gibb,United States (CA),03:30:00,(unsanctioned) 3rd victory[4],177.2424
+1969,Sara Mae Berman,United States (MA),03:22:46,(unsanctioned)[4],176.3067
+1970,Sara Mae Berman,United States (MA),03:05:07,(unsanctioned) 2nd victory[4],175.371
+1971,Sara Mae Berman,United States (MA),03:08:30,(unsanctioned) 3rd victory[4],174.4353
+1972,Nina Kuscsik,United States (NY),03:10:26,first year that women were officially sanctioned,173.4996
+1973,Jacqueline Hansen,United States (CA),03:05:59,,172.5639
+1974,Miki Gorman,United States (CA),02:47:11,,171.6282
+1975,Liane Winter,West Germany,02:42:24,,170.6925
+1976,Kim Merritt,United States (WI),02:47:10,,169.7568
+1977,Miki Gorman,United States (CA),02:48:33,2nd victory,168.8211
+1978,Gayle Barron,United States (GA),02:44:52,,167.8854
+1979,Joan Benoit,United States (ME),02:35:15,,166.9497
+1980,Jacqueline Gareau,Canada,02:34:28,[5],166.014
+1981,Allison Roe,New Zealand,02:26:46,,165.0783
+1982,Charlotte Teske,West Germany,02:29:33,,164.1426
+1983,Joan Benoit,United States (ME),02:22:43,2nd victory,163.2069
+1984,Lorraine Moller,New Zealand,02:29:28,,162.2712
+1985,Lisa Larsen Weidenbach,United States (MI),02:34:06,,161.3355
+1986,Ingrid Kristiansen,Norway,02:24:55,,160.3998
+1987,Rosa Mota,Portugal,02:25:21,,159.4641
+1988,Rosa Mota,Portugal,02:24:30,2nd victory,158.5284
+1989,Ingrid Kristiansen,Norway,02:24:33,2nd victory,157.5927
+1990,Rosa Mota,Portugal,02:25:24,3rd victory,156.657
+1991,Wanda Panfil,Poland,02:24:18,,155.7213
+1992,Olga Markova,Russia,02:23:43,,154.7856
+1993,Olga Markova,Russia,02:25:27,2nd victory,153.8499
+1994,Uta Pippig,Germany,02:21:45,,152.9142
+1995,Uta Pippig,Germany,02:25:11,2nd victory,151.9785
+1996,Uta Pippig,Germany,02:27:12,3rd victory,151.0428
+1997,Fatuma Roba,Ethiopia,02:26:23,,150.1071
+1998,Fatuma Roba,Ethiopia,02:23:21,2nd victory,149.1714
+1999,Fatuma Roba,Ethiopia,02:23:25,3rd victory,148.2357
+2000,Catherine Ndereba,Kenya,02:26:11,,147.3
+2001,Catherine Ndereba,Kenya,02:23:53,2nd victory,146.3643
+2002,Margaret Okayo,Kenya,02:20:43,,145.4286
+2003,Svetlana Zakharova,Russia,02:25:19,,144.4929
+2004,Catherine Ndereba,Kenya,02:24:27,3rd victory,143.5572
+2005,Catherine Ndereba,Kenya,02:25:12,4th victory,142.6215
+2006,Rita Jeptoo,Kenya,02:23:38,,141.6858
+2007,Lidiya Grigoryeva,Russia,02:29:18,,140.7501
+2008,Dire Tune,Ethiopia,02:25:25,2 seconds ahead of 2nd-place finisher,139.8144
+2009,Salina Kosgei,Kenya,02:32:16,1 second ahead of 2nd-place finisher,138.8787
+2010,Teyba Erkesso,Ethiopia,02:26:11,3 seconds ahead of 2nd-place finisher,137.943
+2011,Caroline Kilel,Kenya,02:22:36,2 seconds ahead of 2nd-place finisher,137.0073
+2012,Sharon Cherop,Kenya,02:31:50,2 seconds ahead of 2nd-place finisher,136.0716
+2013,Rita Jeptoo,Kenya,02:26:25,2nd victory,135.1359
+2014,Rita Jeptoo,Kenya,02:18:57,Course record. later disqualified[6],134.2002
+2014,Bizunesh Deba,Ethiopia,02:19:59,,134.2002
+2015,Caroline Rotich,Kenya,02:24:55,,133.2645
+2016,Atsede Baysa,Ethiopia,02:29:19,,132.3288
+2017,Edna Kiplagat,Kenya,02:21:52,,131.3931
+2018,TBD,TBD,TBD,,
