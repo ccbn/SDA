@@ -17,7 +17,11 @@
             font-size: 14px;
             line-height: 1.6em;
           }
-
+          .line
+          {
+            stroke: blue;
+            fill: none;
+          }
         </style>
     </head>
     <body>
@@ -29,10 +33,17 @@
         <p>figure 3. Afghanistan: Behind the Front Line</p>
         <p>the reason for figure 3. is that it is easy to what the plot is and the interpretation of the plot is also easy.</p>
         <h4>What's the point of Figure 7?</h4>
-        <p></p>
+        <p>It is a overview of what the different visualizations contains.</p>
         <h4>Use Figure 7 to find the most common design choice within each category for the Visual narrative and Narrative
           structure (the categories within visual narrative are 'visual structuring', 'highlighting', etc).</h4>
-        <p></p>
+        <p>The most common Visual narrative:</p>
+        <li>Consistent Visual Platform</li>
+				<li>Feature Distinction</li>
+				<li>Object Continuity</li>
+        <p>the most common Narrative structure:</p>
+        <li>User Directed Path</li>
+				<li>Filtering / Selection / Search</li>
+				<li>Captions / Headlines</li>
         <h3>Check out Figure 8 and section 4.3.</h3>
         <h4>What is your favorite genre of narrative visualization? Why?</h4>
         <p></p>
@@ -41,14 +52,125 @@
 
         <h2>Part 2: Visualizing Murders over Time</h2>
         <div id="graph1"></div>
+        <div id="graph2"></div>
 
         <script type="text/javascript">
           var DoughnutChart = function() {
+            var colors = ["green", "red", "yellow", "orange", "purple"]
+            //Width and height
+            var w = 800;
+            var h = 800;
+      			var mapw = 500;
+      			var maph = 500;
+            var timelinew = 700;
+            var timelineh = 250;
+            var padding = 40;
+
+      			//Define map projection
+      			var projection = d3.geoMercator()
+                         .center([-74.10, 40.90])
+  					             .scale(50000)
+  					             .translate([mapw / 2, maph/2]);
+
+      			//Define path generator
+      			var path = d3.geoPath()
+      							 .projection(projection);
+
+      			//Create SVG element
+      			var svgMap = d3.select("#graph2")
+      						.append("svg")
+      						.attr("width", w)
+      						.attr("height", h);
+
+            //Create SVG element
+      			var svgTimeline = d3.select("#graph1")
+      						.append("svg")
+      						.attr("width", timelinew)
+      						.attr("height", timelineh);
+
+      			//Load in GeoJSON data
+      			d3.json("NYC.json", function(json) {
+      				//Bind data and create one path per GeoJSON feature
+      				svgMap.selectAll("path")
+      				   .data(json.features)
+      				   .enter()
+      				   .append("path")
+      				   .attr("d", path)
+      				   .style("fill", function(d) {
+                   var value = d.properties.BoroCode-1;
+                   return colors[value];
+                 });
+
+      			});
+            var dataset = [{"Date":new Date("04/23/2017"), "Murders":10},{"Date":new Date("06/23/2017"), "Murders":5},{"Date":new Date("12/23/2017"), "Murders":8}];
+            console.log(dataset);
+            var xScale = d3.scaleTime()
+                        .domain([
+                          d3.min(dataset, function(d) { return d.Date;}),
+                          d3.max(dataset, function(d) { return d.Date;})
+                        ])
+                        .range([padding, timelinew - padding]);
+
+            var yScale = d3.scaleLinear()
+                        .domain([
+                          0,
+                          d3.max(dataset, function(d) { return d.Murders;})
+                        ])
+                        .range([timelineh - padding, padding]);
+
+            var xAxis = d3.axisBottom()
+                        .scale(xScale)
+                        .ticks(10);
+
+            var yAxis = d3.axisLeft()
+                        .scale(yScale)
+                        .ticks(5);
+
+            svgTimeline.append("g")
+                .attr("id", "circles")
+                .attr("clip-path", "url(#chart-area)")
+                .selectAll("circle")
+                .data(dataset)
+                .enter()
+                .append("circle")
+                .attr("cx", function(d) {
+                  return xScale(d.Date);
+                })
+                .attr("cy", function(d) {
+                  return yScale(d.Murders);
+                })
+                .attr("r", function(d) {
+                  return 3;
+                });
+
+            var line = d3.line()
+                  .x(function(d) {
+                    return xScale(d.Date); })
+                  .y(function(d) { return yScale(d.Murders); })
+
+
+            svgTimeline.append("g")
+              .attr("class", "axis")
+              .attr("transform", "translate(0," + (timelineh - padding) + ")")
+              .call(xAxis)
+
+            svgTimeline.append("g")
+              .attr("class", "axis")
+              .attr("transform", "translate(" + (padding) + ",0)")
+              .call(yAxis)
+
+            svgTimeline.append("path")
+              .datum(dataset)
+              .attr("class", "line")
+              .attr("d", line)
+              .attr("stroke-width",1)
 
           };
 
+
+
           DoughnutChart();
-          StackedAreaChart();
+          //StackedAreaChart();
 
 
 
