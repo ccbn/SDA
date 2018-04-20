@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Page Template</title>
+        <script type="text/javascript" src="d3.js"></script>
+        <link rel="stylesheet" href="css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <style>
+          .h2
+          {
+            font-family: Georgia;
+            font-weight: bold;
+            font-size: 36px;
+          }
+          .p-custom
+          {
+            font-family: Georgia;
+            font-size: 14px;
+            line-height: 1.6em;
+          }
+          .line
+          {
+            stroke: blue;
+            fill: none;
+          }
+        </style>
+    </head>
+    <body>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-2"></div>
+            <div class="col-md-8">
+              <h2>Part 1: Telling Data Stories</h2>
+              <h4>What is the Oxford English Dictionary's defintion of a narrative?</h4>
+              <p>Oxford English Dictionary's definition of a narrative is the following:</p>
+              <p>“an account of a series of events, facts, etc., given in order and with the establishing of connections between them.”</p>
+              <p>The definition is taken from their website <a href="http://www.oed.com/view/Entry/125146?rskey=6Y5zC4&result=1&isAdvanced=false#eid">Here</a></a></p>
+              <h4>What is your favorite visualization among the examples in section 3? Explain why in a few words.</h4>
+              <p>Figure 3. Afghanistan: Behind the Front Line</p>
+              <p>We like figure 3 because it is easy to interpretate and there are a lot of interaction options. You can change which year and country to show in the plot, if you wish.
+              <h4>What's the point of Figure 7?</h4>
+              <p>It is a overview of what the different visualizations contains.</p>
+              <h4>Use Figure 7 to find the most common design choice within each category for the Visual narrative and Narrative
+                structure (the categories within visual narrative are 'visual structuring', 'highlighting', etc).</h4>
+
+              <p>The most common Visual narrative:</p>
+              <ul>
+                <li>Consistent Visual Platform</li>
+                <li>Feature Distinction</li>
+                <li>Object Continuity</li>
+              </ul>
+              <p>The most common Narrative structure:</p>
+              <ul>
+                <li>User Directed Path</li>
+                <li>Filtering / Selection / Search</li>
+                <li>Captions / Headlines</li>
+              </ul>
+
+              <h3>Check out Figure 8 and section 4.3.</h3>
+              <h4>What is your favorite genre of narrative visualization? Why?</h4>
+              <p>Film/Video/Animation is a fast and easy way of getting information about a toppic but there is no interaction with the
+                information. a movie also has the posibility of running at a faster speed this can be uses so that pedendent on the person
+                ability to learn the movie can run at different speed.</p>
+              <h4>What is your least favorite genre? Why?</h4>
+              <p>Magazine there is no interaction with the magazine this makes the information potential misleading because you can not
+                zoom in on the data or see data from another perspectives.</p>
+
+
+        <h2>Part 2: Visualizing Murders over Time in New York City</h2>
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-2"></div>
+              <div id="graph1"></div>
+              <div style="display: inline;" id="graph2"></div>
+            <div class="col-md-2"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2"></div>
+    </div>
+  </div>
+
+        <script type="text/javascript">
+          var DoughnutChart = function(dataset) {
+            var colors = ["green", "red", "yellow", "orange", "purple"]
+            //Width and height
+            var padding = 40;
+      			var mapw = 700 - padding;
+      			var maph = 700 - padding;
+            var timelinew = 700;
+            var timelineh = 250;
+
+      			//Create SVG element
+      			var svgMap = d3.select("#graph2")
+      						.append("svg")
+      						.attr("width", mapw)
+      						.attr("height", maph);
+
+            //Create SVG element
+      			var svgTimeline = d3.select("#graph1")
+      						.append("svg")
+      						.attr("width", timelinew)
+      						.attr("height", timelineh);
+
+            svgTimeline.append("text")
+            .attr("class", "xText label")
+            .attr("text-anchor", "middle")
+            .attr("x", timelinew / 2)
+            .attr("y", timelineh)
+            .text("Years");
+
+            svgTimeline.append("text")
+            .attr("class", "yText label")
+            .attr("text-anchor", "middle")
+            .attr("y", 0)
+            .attr("x", - timelineh / 2 - 20)
+            .attr("dy", ".75em")
+            .attr("transform", "rotate(-90)")
+            .text("# of murders");
+
+            var xScaleMap = d3.scaleTime()
+                        .domain([
+                          -73.700272,
+                          -74.259090
+                        ])
+                        .range([mapw*2.17, 302.5]);
+
+            var yScaleMap = d3.scaleLinear()
+                        .domain([
+                          40.477399,
+                          40.917577
+                        ])
+                        .range([maph*1.015, 20]);
+
+      			//Load in GeoJSON data
+      			d3.json("NYC.json", function(json) {
+      				//Bind data and create one path per GeoJSON feature
+
+              var projection = d3.geoMercator();
+              var path = d3.geoPath().projection(projection);
+
+              projection
+                .scale(1)
+                .translate([0, 0]);
+
+              var b = path.bounds(json);
+              var s = 0.95/Math.max((b[1][0] - b[0][0])/mapw, (b[1][1] - b[0][1])/maph);
+              var t = [(mapw - s * (b[1][0] + b[0][0]))/2, (maph - s * (b[1][1] + b[0][1]))/2];
+
+              projection
+                .scale(s)
+                .translate(t);
+
+      				svgMap.selectAll("path")
+      				   .data(json.features)
+      				   .enter()
+      				   .append("path")
+      				   .attr("d", path)
+      				   .style("fill", function(d) {
+                   var value = d.properties.BoroCode-1;
+                   return colors[value];
+                 });
+
+              svgMap.append("g")
+                  .selectAll("circle")
+                  .data(dataset)
+                  .enter()
+                  .append("circle")
+                  .attr("cx", function(d) {
+                    return xScaleMap(d.Long);
+                  })
+                  .attr("cy", function(d) {
+                    return yScaleMap(d.Lat);
+                  })
+                  .attr("r", function(d) {
+                    return 3;
+                  })
+      			});
+
+            var MordersCount = d3.nest()
+                .key(function(d) { return d.Date})
+                .rollup(function(v) {return v.length})
+                .entries(dataset);
+
+
+            for (var i = 0; i < MordersCount.length; i++) {
+              MordersCount[i].key = new Date(MordersCount[i].key)
+            }
+
+            var xScale = d3.scaleTime()
+                        .domain([
+                          d3.min(MordersCount, function(d) { return d.key;}),
+                          d3.max(MordersCount, function(d) { return d.key;})
+                        ])
+                        .range([padding, timelinew - padding]);
+
+            var yScale = d3.scaleLinear()
+                        .domain([
+                          1,
+                          d3.max(MordersCount, function(d) { return d.value;})
+                        ])
+                        .range([timelineh - padding, padding]);
+
+            var xAxis = d3.axisBottom()
+                        .scale(xScale)
+                        .ticks(10);
+
+            var yAxis = d3.axisLeft()
+                        .scale(yScale)
+                        .ticks(8);
+
+
+
+            var circles = svgTimeline.append("g")
+                .attr("id", "circles")
+                .selectAll("circle")
+                .data(MordersCount)
+                .enter()
+                .append("circle")
+                .attr("cx", function(d) {
+                  return xScale(d.key);
+                })
+                .attr("cy", function(d) {
+                  return yScale(d.value);
+                })
+                .attr("r", function(d) {
+                  return 1;
+                })
+                .attr("class", "non_brushed");
+
+            var line = d3.line()
+                  .x(function(d) {
+                    return xScale(d.key); })
+                  .y(function(d) { return yScale(d.value); })
+
+
+            svgTimeline.append("g")
+              .attr("class", "axis")
+              .attr("transform", "translate(0," + (timelineh - padding) + ")")
+              .call(xAxis)
+
+            svgTimeline.append("g")
+              .attr("class", "axis")
+              .attr("transform", "translate(" + (padding) + ",0)")
+              .call(yAxis)
+
+            svgTimeline.append("path")
+              .datum(MordersCount)
+              .attr("class", "line")
+              .attr("d", line)
+              .attr("stroke-width",1)
+
+          function isBrushed(brush_coords, cx) {
+
+             var x0 = brush_coords[0],
+                 x1 = brush_coords[1];
+
+             return x0 <= cx && cx <= x1;
+          }
+
+            var brushFunction = function() {
+              if (d3.event.selection != null) {
+                    // revert circles to initial style
+                    circles.attr("class", "non_brushed");
+
+                    var brush_coords = d3.brushSelection(this);
+                    // style brushed circles
+                    circles.filter(function (){
+
+                               var cx = d3.select(this).attr("cx");
+
+                               return isBrushed(brush_coords, cx);
+                           })
+                           .attr("class", "brushed");
+                }
+            };
+
+            var displayData = function() {
+              if (!d3.event.selection) return;
+
+              // programmed clearing of brush after mouse-up
+              // ref: https://github.com/d3/d3-brush/issues/10
+
+
+              var d_brushed =  d3.selectAll(".brushed").data();
+              var count = 0;
+              for (var i = 0; i < d_brushed.length; i++) {
+                count = count + d_brushed[i].value;
+              }
+              var startDate = d_brushed[0].key;
+              var endDate = d_brushed[d_brushed.length-1].key;
+              d_brushed = [];
+              for (var i = 0; i < dataset.length; i++) {
+                if (startDate <= dataset[i].Date && endDate >= dataset[i].Date) {
+                  d_brushed.push(dataset[i]);
+                }
+              }
+
+              svgMap.selectAll('circle').remove();
+
+              svgMap.append("g")
+                  .selectAll("circle")
+                  .data(d_brushed)
+                  .enter()
+                  .append("circle")
+                  .attr("cx", function(d) {
+                    return xScaleMap(d.Long);
+                  })
+                  .attr("cy", function(d) {
+                    return yScaleMap(d.Lat);
+                  })
+                  .attr("r", function(d) {
+                    return 3;
+                  })
+            };
+
+
+            var brush = d3.brushX()
+                          .on("brush", brushFunction)
+                          .on("end", displayData);
+
+            svgTimeline.append("g")
+               .call(brush);
+          };
+
+          var rowConverter = function(row) {
+    				return {
+    					Date: new Date(row.CMPLNT_FR_DT),
+    					Lat: parseFloat(row.Latitude),
+    					Long: parseFloat(row.Longitude)
+    				};
+    			};
+
+          var sortandCutArray = function(dataset) {
+            dataset.sort(function(a, b) {
+              var keyA = new Date(a.Date);
+              var keyB = new Date(b.Date);
+              if(keyA < keyB) return -1;
+              if(keyA > keyB) return 1;
+              return 0;
+            });
+
+            var cut = new Date(2006,0,01);
+            for (var i = 0; i < dataset.length; i++) {
+              if(isNaN(dataset[i].Long) || isNaN(dataset[i].Lat) || dataset[i].Date < cut) {
+                dataset.splice(i,1);
+                i = i - 1;
+              }
+            }
+          };
+
+          d3.csv("Morders.csv", rowConverter, function(data) {
+            sortandCutArray(data);
+            DoughnutChart(data);
+          });
+
+
+          //StackedAreaChart();
+
+
+
+
+
+
+    		</script>
+
+    </body>
+</html>
