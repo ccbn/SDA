@@ -167,10 +167,12 @@
                   .enter()
                   .append("circle")
                   .attr("cx", function(d) {
-                    return xScaleMap(d.Long);
+                    return projection([d.Long, d.Lat])[0]
+                    //return xScaleMap(d.Long);
                   })
                   .attr("cy", function(d) {
-                    return yScaleMap(d.Lat);
+                    return projection([d.Long, d.Lat])[1];
+                    //return yScaleMap(d.Lat);
                   })
                   .attr("r", function(d) {
                     return 3;
@@ -304,10 +306,12 @@
                   .enter()
                   .append("circle")
                   .attr("cx", function(d) {
-                    return xScaleMap(d.Long);
+                    return projection([d.Long, d.Lat])[0]
+                    //return xScaleMap(d.Long);
                   })
                   .attr("cy", function(d) {
-                    return yScaleMap(d.Lat);
+                    return projection([d.Long, d.Lat])[1];
+                    //return yScaleMap(d.Lat);
                   })
                   .attr("r", function(d) {
                     return 3;
