@@ -1,0 +1,7 @@
+{
+  "name": "",
+  "version": "",
+  "dependencies": {
+    "@google/maps": "^0.4.6"
+  }
+}
