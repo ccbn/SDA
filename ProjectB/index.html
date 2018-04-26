@@ -28,11 +28,8 @@
     <body>
         <script type="text/javascript">
         var colors = ["green", "red", "yellow", "orange", "purple"];
-        var width = 700;
-        var height = 700;
-        
-        //Create SVG element
-        
+        var width = 1200;
+        var height = 750;
 
         function loadMap(callback) {
           d3.json("NYC.json", function(json) {
@@ -44,8 +41,8 @@
                 .translate([0, 0]);
 
               var b = path.bounds(json);
-              var s = 0.95/Math.max((b[1][0] - b[0][0])/width, (b[1][1] - b[0][1])/height);
-              var t = [(width - s * (b[1][0] + b[0][0]))/2, (height - s * (b[1][1] + b[0][1]))/2];
+              var s = 1/Math.max((b[1][0] - b[0][0])/width, (b[1][1] - b[0][1])/height);
+              var t = [ (width - s * (b[1][0] + b[0][0]))/2.005, (height - s * (b[1][1] + b[0][1]))/2];
 
               projection
                 .scale(s)
@@ -54,14 +51,29 @@
               var svgMap = d3.select("body")
               .append("svg")
               .attr("width", width)
-              .attr("height", height);
+              .attr("height", height)
+              .call(d3.zoom().on("zoom", function () {
+                svgMap.attr("transform", d3.event.transform);
+                
+                /*svgMap.selectAll("circle")
+                  .attr("r", (width/300) * (1 / d3.event.transform.k))
+                  .attr("mouseover", (width/150) * (1 / d3.event.transform.k))
+                  .
+                
+                  attr("r", (width/300) * d3.event.transform.k)
+                  */
+              }))
+              .append("g");
 
               svgMap.selectAll("path")
               .data(json.features)
               .enter()
               .append("path")
-              .attr("d", path);
-
+              .attr("d", path)
+              .style("fill", function(d) {
+                   var value = d.properties.BoroCode-1;
+                   return colors[value];
+              });
               callback(json,path,projection,svgMap);
             });
         };
@@ -74,9 +86,25 @@
           };
         };
 
-        d3.csv("./data/coord-0-1700.csv", rowConverter, function(data) {
-          loadMap(function(json,path,projection,svgMap) {
-            svgMap.append("g")
+        function handleMouseClick() {
+          console.log("Circle Clicked!");
+          
+        }
+        
+        function handleMouseOver() {
+          d3.select(this)
+            .attr("fill","red")
+            .attr("r", width/150);
+        };
+
+        function handleMouseOut() {
+          d3.select(this)
+            .attr("fill","black")
+            .attr("r", width/300);
+        }
+
+        function loadCircles(svgMap,data,projection) {
+          svgMap.append("g")
               .selectAll("circle")
               .data(data)
               .enter()
@@ -88,13 +116,21 @@
                 return projection([d.Long, d.Lat])[1];
               })
               .attr("r", function(d) {
-                return 3;
+                return width/300;
               })
               .attr("fill", "black")
-              .attr("stroke", "white");
+              .attr("stroke", "white")
+              .on("click", handleMouseClick)
+              .on("mouseover", handleMouseOver)
+              .on("mouseout", handleMouseOut);
+        }
+
+        d3.csv("./data/coord-0-1700.csv", rowConverter, function(data) {
+          loadMap(function(json,path,projection,svgMap) {
+            loadCircles(svgMap,data,projection);
           });
 
-          
+
         });
     		</script>
 
