@@ -27,7 +27,7 @@
     </head>
     <body>
         <script type="text/javascript">
-        var colors = ["green", "red", "yellow", "orange", "purple"];
+        var colors = ["blue", "teal", "brown", "pink", "purple"];
         var width = 1200;
         var height = 750;
 
@@ -42,7 +42,7 @@
 
               var b = path.bounds(json);
               var s = 1/Math.max((b[1][0] - b[0][0])/width, (b[1][1] - b[0][1])/height);
-              var t = [ (width - s * (b[1][0] + b[0][0]))/2.005, (height - s * (b[1][1] + b[0][1]))/2];
+              var t = [ (width - s * (b[1][0] + b[0][0]))/2, (height - s * (b[1][1] + b[0][1]))/2];
 
               projection
                 .scale(s)
@@ -54,14 +54,8 @@
               .attr("height", height)
               .call(d3.zoom().on("zoom", function () {
                 svgMap.attr("transform", d3.event.transform);
-                
-                /*svgMap.selectAll("circle")
-                  .attr("r", (width/300) * (1 / d3.event.transform.k))
-                  .attr("mouseover", (width/150) * (1 / d3.event.transform.k))
-                  .
-                
-                  attr("r", (width/300) * d3.event.transform.k)
-                  */
+                svgMap.selectAll("circle")
+                  .attr("r", (width/300) * (1 / d3.event.transform.k));
               }))
               .append("g");
 
@@ -80,9 +74,9 @@
                   
         var rowConverter = function(row) {
           return {
-            Address: row.address,
-            Lat: parseFloat(row.lat),
-            Long: parseFloat(row.lon)
+            Score: parseInt(row.SCORE),
+            Lat: parseFloat(row.LAT),
+            Long: parseFloat(row.LON)
           };
         };
 
@@ -104,6 +98,12 @@
         }
 
         function loadCircles(svgMap,data,projection) {
+          
+          var maxScore = d3.max(data, function(d) { return d.Score;});
+          var colorScale = d3.scaleLinear()
+                        .domain([0,20])
+                        .range([310,200]);
+
           svgMap.append("g")
               .selectAll("circle")
               .data(data)
@@ -118,19 +118,23 @@
               .attr("r", function(d) {
                 return width/300;
               })
-              .attr("fill", "black")
-              .attr("stroke", "white")
+              .attr("fill", function(d) {
+                if(isNaN(d.Score)) return "black";
+                else if(colorScale(d.Score) < 200){
+                  return d3.hsl(200,100,50);
+                }else {
+                  return d3.hsl(colorScale(d.Score),100,50);
+                }
+              })
               .on("click", handleMouseClick)
               .on("mouseover", handleMouseOver)
               .on("mouseout", handleMouseOut);
         }
 
-        d3.csv("./data/coord-0-1700.csv", rowConverter, function(data) {
+        d3.csv("./data/dataset.csv", rowConverter, function(data) {
           loadMap(function(json,path,projection,svgMap) {
             loadCircles(svgMap,data,projection);
           });
-
-
         });
     		</script>
 
