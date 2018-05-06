@@ -23,9 +23,20 @@
             stroke: blue;
             fill: none;
           }
+          .tooltip
+          {
+            border: 1px solid black;
+            border-radius: 5px;
+            padding: 5px;
+            color: black;
+            background-color: white;
+            position: absolute;
+            pointer-events: none;
+          }
         </style>
     </head>
     <body>
+      <div id=scatter></div>
         <script type="text/javascript">
         var colors = ["blue", "teal", "brown", "pink", "purple"];
         var width = 1200;
@@ -71,10 +82,12 @@
               callback(json,path,projection,svgMap);
             });
         };
-                  
+
         var rowConverter = function(row) {
           return {
+            Dba: row.DBA,
             Score: parseInt(row.SCORE),
+            Grade: row.GRADE,
             Lat: parseFloat(row.LAT),
             Long: parseFloat(row.LON)
           };
@@ -82,13 +95,14 @@
 
         function handleMouseClick() {
           console.log("Circle Clicked!");
-          
+
         }
-        
+
         function handleMouseOver() {
           d3.select(this)
             .attr("fill","red")
             .attr("r", width/150);
+
         };
 
         function handleMouseOut() {
@@ -97,8 +111,8 @@
             .attr("r", width/300);
         }
 
-        function loadCircles(svgMap,data,projection) {
-          
+        function loadCircles(svgMap,data,projection,tooltip) {
+
           var maxScore = d3.max(data, function(d) { return d.Score;});
           var colorScale = d3.scaleLinear()
                         .domain([0,20])
@@ -127,13 +141,31 @@
                 }
               })
               .on("click", handleMouseClick)
-              .on("mouseover", handleMouseOver)
-              .on("mouseout", handleMouseOut);
+              .on("mouseover", function(d) {
+                d3.select(this)
+                  .attr("r", width/150);
+                  tooltip.transition()
+                       .duration(200)
+                       .style("opacity", .9);
+                  tooltip.html(d.Dba + "<br/>" + "Score: " + d.Score + "<br/>" + "Grade: " + d.Grade)
+                       .style("left", (d3.event.pageX + 5) + "px")
+                       .style("top", (d3.event.pageY - 28) + "px");
+              })
+              .on("mouseout", function(d) {
+                d3.select(this)
+                  .attr("r", width/300);
+                  tooltip.transition()
+                       .duration(500)
+                       .style("opacity", 0);
+              });
         }
 
         d3.csv("./data/dataset.csv", rowConverter, function(data) {
           loadMap(function(json,path,projection,svgMap) {
-            loadCircles(svgMap,data,projection);
+            var tooltip = d3.select("#scatter").append("div")
+              .attr("class", "tooltip")
+              .style("opacity", 0);
+            loadCircles(svgMap,data,projection,tooltip);
           });
         });
     		</script>
