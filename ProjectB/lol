@@ -1,0 +1,20 @@
+var array = [];
+          var currentDate = NumberOfInspectionsPerDay[0].key;
+          var lastDate = new Date(NumberOfInspectionsPerDay[NumberOfInspectionsPerDay.length - 1].key);
+          var Dates = NumberOfInspectionsPerDay.map(function(d) {
+            return d.key;
+          });
+          
+          var index = 0;
+          while(new Date(currentDate) <= lastDate) {
+            if(Dates.includes(currentDate)) {
+              array.push({key: currentDate, value: NumberOfInspectionsPerDay[index]});
+              index++;
+            } else {
+              array.push({key: currentDate, value: 0});
+            }
+            currentDate = (new Date(currentDate));
+            var nextDate = new Date(currentDate);
+            nextDate.setDate(currentDate.getDate()+1);
+            currentDate = nextDate.toDateString();
+          }
