@@ -42,6 +42,33 @@
         var width = 1200;
         var height = 750;
 
+        function createTooltip() {
+          var toolTip = d3.select("#scatter").append("div")
+              .attr("class", "tooltip")
+              .style("opacity", 0);
+          return toolTip;
+        }
+
+        function loadTimeline(dataset) {
+          var width = 700;
+          var height = 500;
+          
+          var NumberOfInspectionsPerDay = d3.nest()
+                .key(function(d) { return d.InspectionDate})
+                .rollup(function(v) {return v.length})
+                .entries(dataset);
+          
+          for (let index = 0; index < NumberOfInspectionsPerDay.length; index++) {
+            
+          }
+
+          var svgTimeline = d3.select("body")
+      						.append("svg")
+      						.attr("width", width)
+      						.attr("height", height);
+          
+        }
+
         function loadMap(callback) {
           d3.json("NYC.json", function(json) {
               var projection = d3.geoMercator();
@@ -88,6 +115,7 @@
             Dba: row.DBA,
             Score: parseInt(row.SCORE),
             Grade: row.GRADE,
+            InspectionDate: new Date(row["INSPECTION DATE"]),
             Lat: parseFloat(row.LAT),
             Long: parseFloat(row.LON)
           };
@@ -162,10 +190,9 @@
 
         d3.csv("./data/dataset.csv", rowConverter, function(data) {
           loadMap(function(json,path,projection,svgMap) {
-            var tooltip = d3.select("#scatter").append("div")
-              .attr("class", "tooltip")
-              .style("opacity", 0);
-            loadCircles(svgMap,data,projection,tooltip);
+            var toolTip = createTooltip();
+            loadCircles(svgMap,data,projection,toolTip);
+            loadTimeline(data);
           });
         });
     		</script>
