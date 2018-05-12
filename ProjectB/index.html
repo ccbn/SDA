@@ -5,6 +5,9 @@
         <title>D3 Page Template</title>
         <script type="text/javascript" src="d3.js"></script>
         <link rel="stylesheet" href="css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="./jquery/jquery-ui.css">
+        <script src="./jquery/jquery.js"></script>
+        <script src="./jquery/jquery-ui.js"></script>
         <style>
           .h2
           {
@@ -38,13 +41,76 @@
             display: block;
             margin: auto;
           }
+          #detailswrapper h1
+          {
+            text-align: center;
+          }
+          table
+          {
+            margin-left: auto;
+            margin-right: auto;
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 95%;
+          }
+          td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+            width: 50%;
+          }
+          tr:nth-child(even)
+          {
+            background-color: #dddddd;
+          }
         </style>
     </head>
     <body>
-      <div id=scatter></div>
-      <div id=timeline></div>
-      <div id=map></div>
+      <div id="scatter"></div>
+      <div id="timeline"></div>
+      <div id="sliderrange"></div>
+      <div id="map"></div>
+      <div id="detailswrapper">
+        <h1><span id = "restaurantName">Restaurant</span> details</h1>
+        <table id = "details">
+          <tr>
+            <td>address</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Phone</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Cuisine</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Violation Decription</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Score</td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
         <script type="text/javascript">
+
+        var resizeId;
+        window.addEventListener("resize", function() {
+          clearTimeout(resizeId);
+          resizeId = setTimeout(page, 500);
+        });
+        page();
+        function page() {
+          var DivScatter = document.getElementById("scatter");
+          DivScatter.innerHTML = "";
+          var divTimeLine = document.getElementById("timeline");
+          divTimeLine.innerHTML = "";
+          var divMap = document.getElementById("map");
+          divMap.innerHTML = "";
+
         var colors = ["blue", "teal", "brown", "pink", "purple"];
         var width = window.innerWidth*0.6;
         var height = window.innerWidth*0.6;
@@ -187,21 +253,26 @@
 
 
             var d_brushed =  d3.selectAll(".brushed").data();
-            var count = 0;
-            for (var i = 0; i < d_brushed.length; i++) {
-              count = count + d_brushed[i].value;
-            }
-            var startDate = d_brushed[0].key;
-            var endDate = d_brushed[d_brushed.length-1].key;
-            d_brushed = [];
-            for (var i = 0; i < dataset.length; i++) {
-              if (startDate <= dataset[i].InspectionDate && endDate >= dataset[i].InspectionDate) {
-                d_brushed.push(dataset[i]);
+            if(d_brushed.length > 0) {
+              var count = 0;
+              for (var i = 0; i < d_brushed.length; i++) {
+                count = count + d_brushed[i].value;
               }
-            }
-            svgMap.selectAll('circle').remove();
+              var startDate = d_brushed[0].key;
+              var endDate = d_brushed[d_brushed.length-1].key;
+              d_brushed = [];
+              for (var i = 0; i < dataset.length; i++) {
+                if (startDate <= dataset[i].InspectionDate && endDate >= dataset[i].InspectionDate) {
+                  d_brushed.push(dataset[i]);
+                }
+              }
+              svgMap.selectAll('circle').remove();
 
-            loadCircles(svgMap,d_brushed,projection,toolTip)
+
+
+              loadCircles(svgMap,d_brushed,projection,toolTip)
+            }
+
 
           };
 
@@ -261,17 +332,33 @@
         var rowConverter = function(row) {
           return {
             Dba: row.DBA,
+            Boro: row.BORO,
+            Building: row.BUILDING,
+            Street: row.STREET,
+            ZipCode: row.ZIPCODE,
+            Phone: row.PHONE,
+            Description: row["CUISINE DESCRIPTION"],
             Score: parseInt(row.SCORE),
             Grade: row.GRADE,
+            ViolationD: row["VIOLATION DESCRIPTION"],
             InspectionDate: new Date(row["INSPECTION DATE"]),
             Lat: parseFloat(row.LAT),
             Long: parseFloat(row.LON)
           };
         };
 
-        function handleMouseClick() {
-          //console.log("Circle Clicked!");
+        function handleMouseClick(d) {
+          document.getElementById("restaurantName").innerHTML = d.Dba;
+          var table = document.getElementById("details");
+          table.rows[0].cells[1].innerHTML = d.Building + " " + d.Street + ", " + d.Boro + ", NY " + d.ZipCode;
+          table.rows[1].cells[1].innerHTML = d.Phone;
+          table.rows[2].cells[1].innerHTML = d.Description;
+          table.rows[3].cells[1].innerHTML = d.ViolationD;
+          table.rows[4].cells[1].innerHTML = d.Score;
 
+          document.getElementById("restaurantName").scrollIntoView();
+          /*var div = document.getElementById("details");
+          var name = "<h3>" + d.Dba +"</h3>";*/
         }
 
         function handleMouseOver() {
@@ -293,6 +380,9 @@
           var colorScale = d3.scaleLinear()
                         .domain([0,20])
                         .range([310,200]);
+
+          var selection = $("#sliderrange").slider("values");
+          console.log(selection);
 
           svgMap.append("g")
               .selectAll("circle")
@@ -323,7 +413,7 @@
                   tooltip.transition()
                        .duration(200)
                        .style("opacity", .9);
-                  tooltip.html(d.Dba + "<br/>" + "Score: " + d.Score + "<br/>" + "Grade: " + d.Grade)
+                  tooltip.html(d.Dba + "<br/>" + "Score: " + d.Score)
                        .style("left", (d3.event.pageX + 5) + "px")
                        .style("top", (d3.event.pageY - 28) + "px");
               })
@@ -345,7 +435,7 @@
               return 0;
             });
 
-            var cut = new Date(1901,0,01);
+            var cut = new Date(2014,5,01);
             for (var i = 0; i < dataset.length; i++) {
               if(isNaN(dataset[i].Long) || isNaN(dataset[i].Lat) || dataset[i].InspectionDate < cut) {
                 dataset.splice(i,1);
@@ -354,15 +444,30 @@
             }
           };
 
+        function loadSlider(data) {
+          var max = d3.max(data, function(d) { return d.Score;});
+          $( "#sliderrange" ).slider({
+            range: true,
+            min: 0,
+            max: max,
+            values: [ 0, max ],
+            slide: function( event, ui ) {
+              brushedfunc()
+            }
+          });
+        }
+
         d3.csv("./data/dataset.csv", rowConverter, function(data) {
           sortandCutArray(data);
-
+          loadSlider(data);
           loadMap(function(json,path,projection,svgMap) {
+
             var toolTip = createTooltip();
             loadCircles(svgMap,data,projection,toolTip);
             loadTimeline(data,projection,svgMap,toolTip);
           });
         });
+      }
     		</script>
 
     </body>
