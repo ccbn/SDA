@@ -45,8 +45,14 @@
           {
             text-align: center;
           }
+          #sliderRangeWrapper
+          {
+
+
+          }
           table
           {
+            margin-bottom: 15px;
             margin-left: auto;
             margin-right: auto;
             font-family: arial, sans-serif;
@@ -61,20 +67,61 @@
           }
           tr:nth-child(even)
           {
-            background-color: #dddddd;
+            background-color: #fcfcfc;
           }
+          .filter
+          {
+            float: left;
+            width: 25%;
+            margin-left: 25px;
+          }
+          .selectStyle
+          {
+            border: 1px solid #ccc;
+            width: 120px;
+            border-radius: 3px;
+            overflow: hidden;
+            background: #fafafa;
+          }
+          .selectStyle select
+          {
+            padding: 5px 8px;
+
+            border: none;
+            box-shadow: none;
+            background: transparent;
+            
+          }
+
+
         </style>
     </head>
     <body>
       <div id="scatter"></div>
       <div id="timeline"></div>
-      <div id="sliderrange"></div>
+      <div class = "filter" id="sliderRangeWrapper">
+        <h3>Range: <span id="sliderRangeText"></span></h3>
+        <div id="sliderrange">
+
+        </div>
+      </div>
+      <div class = "filter">
+          <h3>Critical Flag: <span id="sliderRangeText"></span></h3>
+        <div class="selectStyle">
+          <select id="dropdown">
+            <option></option>
+            <option>Critical</option>
+            <option>Not Critical</option>
+            <option>Not Applicable</option>
+          </select>
+        </div>
+      </div>
       <div id="map"></div>
       <div id="detailswrapper">
-        <h1><span id = "restaurantName">Restaurant</span> details</h1>
+        <h1><span id="restaurantName">Restaurant</span></h1>
         <table id = "details">
           <tr>
-            <td>address</td>
+            <td>Address</td>
             <td></td>
           </tr>
           <tr>
@@ -85,15 +132,9 @@
             <td>Cuisine</td>
             <td></td>
           </tr>
-          <tr>
-            <td>Violation Decription</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Score</td>
-            <td></td>
-          </tr>
         </table>
+
+        <div id="detailsInspections"></div>
       </div>
         <script type="text/javascript">
 
@@ -122,7 +163,7 @@
           return toolTip;
         }
 
-        function loadTimeline(dataset,projection,svgMap,toolTip) {
+        function loadTimeline(dataset,projection,svgMap,toolTip,brushedfunc) {
           var width = window.innerWidth;
           var height = 250;
           var padding = 30;
@@ -242,10 +283,10 @@
                          })
                          .attr("class", "brushed");
               }
-            displayData();
+            filterandloadCircles(dataset,svgMap,projection,toolTip);
           }
 
-          var displayData = function() {
+          /*var displayData = function() {
             if (!d3.event.selection) return;
 
             // programmed clearing of brush after mouse-up
@@ -274,7 +315,7 @@
             }
 
 
-          };
+          };*/
 
 
           var brush = d3.brushX()
@@ -331,6 +372,7 @@
 
         var rowConverter = function(row) {
           return {
+            Camis: row.CAMIS,
             Dba: row.DBA,
             Boro: row.BORO,
             Building: row.BUILDING,
@@ -340,6 +382,7 @@
             Description: row["CUISINE DESCRIPTION"],
             Score: parseInt(row.SCORE),
             Grade: row.GRADE,
+            Critical: row["CRITICAL FLAG"],
             ViolationD: row["VIOLATION DESCRIPTION"],
             InspectionDate: new Date(row["INSPECTION DATE"]),
             Lat: parseFloat(row.LAT),
@@ -347,14 +390,26 @@
           };
         };
 
-        function handleMouseClick(d) {
+        function handleMouseClick(d, data) {
+          var DateFormater = d3.timeFormat("%m/%d/%Y");
           document.getElementById("restaurantName").innerHTML = d.Dba;
           var table = document.getElementById("details");
           table.rows[0].cells[1].innerHTML = d.Building + " " + d.Street + ", " + d.Boro + ", NY " + d.ZipCode;
           table.rows[1].cells[1].innerHTML = d.Phone;
           table.rows[2].cells[1].innerHTML = d.Description;
-          table.rows[3].cells[1].innerHTML = d.ViolationD;
-          table.rows[4].cells[1].innerHTML = d.Score;
+          var tableString = "";
+          for (var i = 0; i < data.length; i++) {
+            if(d.Camis == data[i].Camis) {
+              tableString += "<table>"
+               + "<tr><td>Inspection Date</td>" + "<td>" + DateFormater(data[i].InspectionDate) + "</td></tr>"
+               + "<tr><td>Violation Decription</td>" + "<td>" + data[i].Building + " " + data[i].Street + ", " + data[i].Boro
+                  + ", NY " + data[i].ZipCode + "</td></tr>"
+               + "<tr><td>Score</td>" + "<td>" + data[i].Score + "</td></tr>"
+               + "<tr><td>Critical Flag</td>" + "<td>" + data[i].Critical + "</td></tr>"
+               + "</table>";
+             }
+          }
+          document.getElementById("detailsInspections").innerHTML = tableString;
 
           document.getElementById("restaurantName").scrollIntoView();
           /*var div = document.getElementById("details");
@@ -381,8 +436,6 @@
                         .domain([0,20])
                         .range([310,200]);
 
-          var selection = $("#sliderrange").slider("values");
-          console.log(selection);
 
           svgMap.append("g")
               .selectAll("circle")
@@ -406,7 +459,9 @@
                   return d3.hsl(colorScale(d.Score),100,50);
                 }
               })
-              .on("click", handleMouseClick)
+              .on("click", function(d) {
+                handleMouseClick(d, data);
+              })
               .on("mouseover", function(d) {
                 d3.select(this)
                   .attr("r", width/150);
@@ -444,7 +499,7 @@
             }
           };
 
-        function loadSlider(data) {
+        function loadSlider(data,svgMap,projection,toolTip) {
           var max = d3.max(data, function(d) { return d.Score;});
           $( "#sliderrange" ).slider({
             range: true,
@@ -452,19 +507,112 @@
             max: max,
             values: [ 0, max ],
             slide: function( event, ui ) {
-              brushedfunc()
+              //sliderRangeText
+              document.getElementById("sliderRangeText").innerHTML = ui.values[0] + " - " + ui.values[1];
+              filterandloadCircles(data, svgMap,projection,toolTip);
             }
           });
+          document.getElementById("sliderRangeText").innerHTML = 0 + " - " + max;
+        }
+
+        function loadDropdown(data,svgMap,projection,toolTip) {
+          var dropdown = document.getElementById("dropdown");
+          dropdown.addEventListener("change", function() {
+            filterandloadCircles(data, svgMap,projection,toolTip);
+          });
+        }
+
+        var filterData = function(dataset,svgMap,projection,toolTip) {
+          //if (!d3.event.selection) return;
+
+          // programmed clearing of brush after mouse-up
+          // ref: https://github.com/d3/d3-brush/issues/10
+
+
+          var d_brushed =  d3.selectAll(".brushed").data();
+          if(d_brushed.length > 0) {
+            var count = 0;
+            for (var i = 0; i < d_brushed.length; i++) {
+              count = count + d_brushed[i].value;
+            }
+            var startDate = d_brushed[0].key;
+            var endDate = d_brushed[d_brushed.length-1].key;
+            d_brushed = [];
+            for (var i = 0; i < dataset.length; i++) {
+              if (startDate <= dataset[i].InspectionDate && endDate >= dataset[i].InspectionDate) {
+                d_brushed.push(dataset[i]);
+              }
+            }
+            svgMap.selectAll('circle').remove();
+            filteredData = d_brushed;
+
+            filteredData = rangeFilterData(filteredData);
+            filteredData = dropdownFilterData(filteredData);
+
+
+            return filteredData;
+          }else {
+            console.log("vi er her");
+            filteredData = rangeFilterData(dataset);
+            filteredData = dropdownFilterData(filteredData);
+            return filteredData;
+          }
+        };
+
+        var rangeFilterData = function(dataset) {
+          var selection = $("#sliderrange").slider("values");
+          var filteredData = [];
+          //console.log(selection[0]);
+          for (var i = 0; i < dataset.length; i++) {
+            if (selection[0] <= dataset[i].Score && selection[1] >= dataset[i].Score) {
+              if(dataset[i].Score <= 7) {
+                //console.log(dataset[i].Score);
+              }
+
+              filteredData.push(dataset[i]);
+            }
+          }
+          return filteredData;
+        }
+
+        var dropdownFilterData = function(dataset) {
+          var dropdownIndex = document.getElementById("dropdown").selectedIndex;
+          var names = ["critical", "not critical", "not applicable"];
+          var filteredData = [];
+          //console.log(selection[0]);
+          if(dropdownIndex != 0) {
+            for (var i = 0; i < dataset.length; i++) {
+              if (dataset[i].Critical.toLowerCase() == names[dropdownIndex-1]) {
+
+
+                filteredData.push(dataset[i]);
+              }
+            }
+            return filteredData;
+          }else {
+            return dataset;
+          }
+
+        }
+
+
+        var filterandloadCircles = function(dataset,svgMap,projection,toolTip) {
+          svgMap.selectAll('circle').remove();
+          filteredData = filterData(dataset,svgMap,projection,toolTip);
+          loadCircles(svgMap,filteredData,projection,toolTip)
         }
 
         d3.csv("./data/dataset.csv", rowConverter, function(data) {
           sortandCutArray(data);
-          loadSlider(data);
           loadMap(function(json,path,projection,svgMap) {
 
             var toolTip = createTooltip();
-            loadCircles(svgMap,data,projection,toolTip);
             loadTimeline(data,projection,svgMap,toolTip);
+            loadSlider(data,svgMap,projection,toolTip);
+            loadDropdown(data,svgMap,projection,toolTip);
+            loadCircles(svgMap,data,projection,toolTip);
+
+
           });
         });
       }
