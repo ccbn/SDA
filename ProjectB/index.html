@@ -90,7 +90,7 @@
             border: none;
             box-shadow: none;
             background: transparent;
-            
+
           }
 
 
@@ -136,6 +136,7 @@
 
         <div id="detailsInspections"></div>
       </div>
+      <div id="graph"></div>
         <script type="text/javascript">
 
         var resizeId;
@@ -285,37 +286,6 @@
               }
             filterandloadCircles(dataset,svgMap,projection,toolTip);
           }
-
-          /*var displayData = function() {
-            if (!d3.event.selection) return;
-
-            // programmed clearing of brush after mouse-up
-            // ref: https://github.com/d3/d3-brush/issues/10
-
-
-            var d_brushed =  d3.selectAll(".brushed").data();
-            if(d_brushed.length > 0) {
-              var count = 0;
-              for (var i = 0; i < d_brushed.length; i++) {
-                count = count + d_brushed[i].value;
-              }
-              var startDate = d_brushed[0].key;
-              var endDate = d_brushed[d_brushed.length-1].key;
-              d_brushed = [];
-              for (var i = 0; i < dataset.length; i++) {
-                if (startDate <= dataset[i].InspectionDate && endDate >= dataset[i].InspectionDate) {
-                  d_brushed.push(dataset[i]);
-                }
-              }
-              svgMap.selectAll('circle').remove();
-
-
-
-              loadCircles(svgMap,d_brushed,projection,toolTip)
-            }
-
-
-          };*/
 
 
           var brush = d3.brushX()
@@ -595,6 +565,158 @@
 
         }
 
+        var graphFiltering = function(dataset) {
+          var filter = ["manhattan", "brooklyn", "queens", "bronx", "staten island"];
+          var dataset1 = [];
+          var dataset2 = [];
+          var dataset3 = [];
+          var dataset4 = [];
+          var dataset5 = [];
+
+          for (var i = 0; i < dataset.length; i++) {
+            if (dataset[i].Boro.toLowerCase() == filter[0]) {
+              dataset1.push(dataset[i]);
+            }else if (dataset[i].Boro.toLowerCase() == filter[1]) {
+              dataset2.push(dataset[i]);
+            }else if (dataset[i].Boro.toLowerCase() == filter[2]) {
+              dataset3.push(dataset[i]);
+            }else if (dataset[i].Boro.toLowerCase() == filter[3]) {
+              dataset4.push(dataset[i]);
+            }else if (dataset[i].Boro.toLowerCase() == filter[4]) {
+              dataset5.push(dataset[i]);
+            }
+          }
+          data = countScore(dataset1);
+          data = data.concat(countScore(dataset2));
+          data = data.concat(countScore(dataset3));
+          data = data.concat(countScore(dataset4));
+          data = data.concat(countScore(dataset5));
+
+          return data;
+        }
+
+        var countScore = function(dataset) {
+          var result = [0,0,0,0,0];
+          for (var i = 0; i < dataset.length; i++) {
+            if (dataset[i].Score == 0) {
+              result[0] += 1;
+            }else if (dataset[i].Score <= 10) {
+              result[1] += 1;
+            }else if (dataset[i].Score <= 20) {
+              result[2] += 1;
+            }else if (dataset[i].Score <= 30) {
+              result[3] += 1;
+            }else {
+              result[4] += 1;
+            }
+          }
+          return result;
+        }
+
+        var maxcalc = function(data) {
+          var max = 0;
+          for (var i = 0; i < 5; i++) {
+            var count = 0;
+            for (var j = 0; j < 5; j++) {
+              //console.log(data[j*5+i]);
+                   count += data[j*5+i];
+            }
+            if (count > max) {
+              max = count;
+            }
+          }
+        }
+
+        var loadGraph = function(data) {
+          var yVariable = ["0", "1 to 10", "11 to 20", "21 to 30", "31+"];
+          var width = 800;
+          var height = 500;
+          var padding = 30;
+
+
+
+          var xScale = d3.scaleBand()
+            .domain(yVariable)
+            .range([0 + padding, width])
+            .paddingInner(0.05);
+
+          var yScale = d3.scaleLinear()
+                      .domain([
+                        0,
+                        maxcalc(data)
+                      ])
+                      .range([height - padding, padding]);
+
+          var xAxis = d3.axisBottom()
+                      .scale(xScale)
+                      .ticks(5);
+
+          var yAxis = d3.axisLeft()
+                      .scale(yScale)
+                      .ticks(5);
+
+          var svgGraph = d3.select("#graph")
+      						.append("svg")
+      						.attr("width", width)
+      						.attr("height", height);
+
+          svgGraph.append("text")
+                  .attr("class", "xText label")
+                  .attr("text-anchor", "middle")
+                  .attr("x", width / 2)
+                  .attr("y", height)
+                  .text("Years");
+
+          svgGraph.append("text")
+                  .attr("class", "yText label")
+                  .attr("text-anchor", "middle")
+                  .attr("y", 0)
+                  .attr("x", - height / 2 - 20)
+                  .attr("dy", ".75em")
+                  .attr("transform", "rotate(-90)")
+                  .text("# of inspections");
+
+          svgGraph.append("g")
+                  .attr("class", "axis")
+                  .attr("transform", "translate(0," + (height - padding) + ")")
+                  .call(xAxis)
+
+          svgGraph.append("g")
+                  .attr("class", "axis")
+                  .attr("transform", "translate(" + (padding) + ",0)")
+                  .call(yAxis)
+
+          var bars = svg.selectAll("rect")
+          		.data(data)
+          		.enter();
+          		bars.append("rect")
+          	 	.attr("x", function(d) { return x(d.month); })
+          	    .attr("y", function(d) { return y(d.fresh_fruit); })
+          	 	.attr("width", 55)
+          	 	.attr("height", function(d) { return h - y(d.fresh_fruit); })
+          	 	.style("fill", "red");
+          	 bars.append("rect")
+                	.attr("x", function(d) { return x(d.month); })
+                 .attr("y", function(d) { return y(d.fresh_vegetable); })
+                 .attr("width", 55)
+                 .attr("height", function(d) { return h - y(d.fresh_vegetable); })
+                 .style("fill", "green");
+                bars.append("rect")
+             	.attr("x", function(d) { return x(d.month); })
+         		.attr("y", function(d) { return y(d.storage_fruit); })
+         		.attr("width", 55)
+         		.attr("height", function(d) { return h - y(d.storage_fruit); })
+         		.style("fill", "pink");
+              bars.append("rect")
+             	.attr("x", function(d) { return x(d.month); })
+         		.attr("y", function(d) { return y(d.storage_vegetable); })
+         		.attr("width", 55)
+         		.attr("height", function(d) { return h - y(d.storage_vegetable); })
+         		.style("fill", "yellow");
+        }
+
+
+
 
         var filterandloadCircles = function(dataset,svgMap,projection,toolTip) {
           svgMap.selectAll('circle').remove();
@@ -614,7 +736,12 @@
 
 
           });
+          newData = graphFiltering(data);
+          loadGraph(newData);
+
         });
+
+
       }
     		</script>
 
