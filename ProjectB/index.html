@@ -353,8 +353,17 @@
           table.rows[0].cells[1].innerHTML = d.Building + " " + d.Street + ", " + d.Boro + ", NY " + d.ZipCode;
           table.rows[1].cells[1].innerHTML = d.Phone;
           table.rows[2].cells[1].innerHTML = d.Description;
-          var tableString = "";
-          //new stof
+          var tableString = "<h1>Loading...</h1>";
+          document.getElementById("detailsInspections").innerHTML = tableString;
+          document.getElementById("restaurantName").scrollIntoView();
+
+          /*function fetchData(callback){
+            setTimeout(function (){
+              callback([6, 5, 4, 3, 2, 1]);
+            }, 2000);
+          }*/
+
+          tableString = "";
           var result = data.filter(function(newD) {return newD.Camis == d.Camis});
 
           for (var i = 0; i < result.length; i++) {
@@ -705,7 +714,7 @@
                   .attr("class", "yText label")
                   .attr("text-anchor", "middle")
                   .attr("y", 0+padding/4)
-                  .attr("x", - height / 2)
+                  .attr("x", - (height-padding/2) / 2)
                   .attr("dy", ".75em")
                   .attr("transform", "rotate(-90)")
                   .style("font-size", width/60 +"px")
@@ -803,9 +812,9 @@
         }
 
         //dataset2reduced
-        d3.csv("./data/dataset2reduced10TR.csv", rowConverter, function(data) {
+        d3.csv("./data/dataset2reduced10KRows.csv", rowConverter, function(data) {
 
-          console.log(data);
+          //console.log(data);
           sortandCutArray(data);
           //console.log(data);
           loadMap(function(json,path,projection,svgMap) {
