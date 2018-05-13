@@ -346,7 +346,7 @@
             });
         };
 
-        function handleMouseClick(d, data) {
+        function handleMouseClick(d, data, callback) {
           var DateFormater = d3.timeFormat("%m/%d/%Y");
           document.getElementById("restaurantName").innerHTML = d.Dba;
           var table = document.getElementById("details");
@@ -357,13 +357,9 @@
           document.getElementById("detailsInspections").innerHTML = tableString;
           document.getElementById("restaurantName").scrollIntoView();
 
-          /*function fetchData(callback){
-            setTimeout(function (){
-              callback([6, 5, 4, 3, 2, 1]);
-            }, 2000);
-          }*/
+          callback();
+          /*tableString = "";
 
-          tableString = "";
           var result = data.filter(function(newD) {return newD.Camis == d.Camis});
 
           for (var i = 0; i < result.length; i++) {
@@ -374,7 +370,12 @@
              + "<tr><td>Score</td>" + "<td>" + result[i].Score + "</td></tr>"
              + "<tr><td>Critical Flag</td>" + "<td>" + result[i].Critical + "</td></tr>"
              + "</table>";
-          }
+
+          }*/
+          //document.getElementById("detailsInspections").innerHTML = tableString;
+
+          //document.getElementById("restaurantName").scrollIntoView();
+
           //old stof
           /*for (var i = 0; i < data.length; i++) {
             if(d.Camis == data[i].Camis) {
@@ -387,9 +388,9 @@
                + "</table>";
              }
           }*/
-          document.getElementById("detailsInspections").innerHTML = tableString;
+          //document.getElementById("detailsInspections").innerHTML = tableString;
 
-          document.getElementById("restaurantName").scrollIntoView();
+          //document.getElementById("restaurantName").scrollIntoView();
           /*var div = document.getElementById("details");
           var name = "<h3>" + d.Dba +"</h3>";*/
         }
@@ -437,7 +438,23 @@
                 }
               })
               .on("click", function(d) {
-                handleMouseClick(d, data);
+                handleMouseClick(d, data, function() {
+                  var DateFormater = d3.timeFormat("%m/%d/%Y");
+                  tableString = "";
+
+                  var result = data.filter(function(newD) {return newD.Camis == d.Camis});
+
+                  for (var i = 0; i < result.length; i++) {
+                    tableString += "<table>"
+                     + "<tr><td>Inspection Date</td>" + "<td>" + DateFormater(result[i].InspectionDate) + "</td></tr>"
+                     + "<tr><td>Violation Decription</td>" + "<td>" + result[i].Building + " " + result[i].Street + ", " + result[i].Boro
+                        + ", NY " + result[i].ZipCode + "</td></tr>"
+                     + "<tr><td>Score</td>" + "<td>" + result[i].Score + "</td></tr>"
+                     + "<tr><td>Critical Flag</td>" + "<td>" + result[i].Critical + "</td></tr>"
+                     + "</table>";
+                  }
+                  document.getElementById("detailsInspections").innerHTML = tableString;
+                });
               })
               .on("mouseover", function(d) {
                 d3.select(this)
