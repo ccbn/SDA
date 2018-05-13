@@ -152,6 +152,8 @@
           divTimeLine.innerHTML = "";
           var divMap = document.getElementById("map");
           divMap.innerHTML = "";
+          var divMap = document.getElementById("graph");
+          divMap.innerHTML = "";
 
         var colors = ["blue", "teal", "brown", "pink", "purple"];
         var width = window.innerWidth*0.6;
@@ -166,8 +168,8 @@
 
         function loadTimeline(dataset,projection,svgMap,toolTip,brushedfunc) {
           var width = window.innerWidth;
-          var height = 250;
-          var padding = 30;
+          var height = window.innerWidth*0.2;
+          var padding = width/25;//30;
 
           var NumberOfInspectionsPerDay = d3.nest()
                 .key(function(d) { return d.InspectionDate})
@@ -216,26 +218,30 @@
                   .attr("class", "xText label")
                   .attr("text-anchor", "middle")
                   .attr("x", width / 2)
-                  .attr("y", height)
+                  .attr("y", height-height/40)
+                  .style("font-size", width/60 +"px")
                   .text("Years");
 
           svgTimeline.append("text")
                   .attr("class", "yText label")
                   .attr("text-anchor", "middle")
-                  .attr("y", 0)
-                  .attr("x", - height / 2 - 20)
+                  .attr("y", 0+width/200)
+                  .attr("x", - height / 2)
                   .attr("dy", ".75em")
                   .attr("transform", "rotate(-90)")
+                  .style("font-size", width/60 +"px")
                   .text("# of inspections");
 
           svgTimeline.append("g")
                   .attr("class", "axis")
                   .attr("transform", "translate(0," + (height - padding) + ")")
+                  .style("font-size", width/100 +"px")
                   .call(xAxis)
 
           svgTimeline.append("g")
                   .attr("class", "axis")
                   .attr("transform", "translate(" + (padding) + ",0)")
+                  .style("font-size", width/100 +"px")
                   .call(yAxis)
 
           var circles = svgTimeline.append("g")
@@ -340,26 +346,6 @@
             });
         };
 
-        var rowConverter = function(row) {
-          return {
-            Camis: row.CAMIS,
-            Dba: row.DBA,
-            Boro: row.BORO,
-            Building: row.BUILDING,
-            Street: row.STREET,
-            ZipCode: row.ZIPCODE,
-            Phone: row.PHONE,
-            Description: row["CUISINE DESCRIPTION"],
-            Score: parseInt(row.SCORE),
-            Grade: row.GRADE,
-            Critical: row["CRITICAL FLAG"],
-            ViolationD: row["VIOLATION DESCRIPTION"],
-            InspectionDate: new Date(row["INSPECTION DATE"]),
-            Lat: parseFloat(row.LAT),
-            Long: parseFloat(row.LON)
-          };
-        };
-
         function handleMouseClick(d, data) {
           var DateFormater = d3.timeFormat("%m/%d/%Y");
           document.getElementById("restaurantName").innerHTML = d.Dba;
@@ -368,7 +354,20 @@
           table.rows[1].cells[1].innerHTML = d.Phone;
           table.rows[2].cells[1].innerHTML = d.Description;
           var tableString = "";
-          for (var i = 0; i < data.length; i++) {
+          //new stof
+          var result = data.filter(function(newD) {return newD.Camis == d.Camis});
+
+          for (var i = 0; i < result.length; i++) {
+            tableString += "<table>"
+             + "<tr><td>Inspection Date</td>" + "<td>" + DateFormater(result[i].InspectionDate) + "</td></tr>"
+             + "<tr><td>Violation Decription</td>" + "<td>" + result[i].Building + " " + result[i].Street + ", " + result[i].Boro
+                + ", NY " + result[i].ZipCode + "</td></tr>"
+             + "<tr><td>Score</td>" + "<td>" + result[i].Score + "</td></tr>"
+             + "<tr><td>Critical Flag</td>" + "<td>" + result[i].Critical + "</td></tr>"
+             + "</table>";
+          }
+          //old stof
+          /*for (var i = 0; i < data.length; i++) {
             if(d.Camis == data[i].Camis) {
               tableString += "<table>"
                + "<tr><td>Inspection Date</td>" + "<td>" + DateFormater(data[i].InspectionDate) + "</td></tr>"
@@ -378,7 +377,7 @@
                + "<tr><td>Critical Flag</td>" + "<td>" + data[i].Critical + "</td></tr>"
                + "</table>";
              }
-          }
+          }*/
           document.getElementById("detailsInspections").innerHTML = tableString;
 
           document.getElementById("restaurantName").scrollIntoView();
@@ -400,7 +399,6 @@
         }
 
         function loadCircles(svgMap,data,projection,tooltip) {
-
           var maxScore = d3.max(data, function(d) { return d.Score;});
           var colorScale = d3.scaleLinear()
                         .domain([0,25])
@@ -460,7 +458,7 @@
               return 0;
             });
 
-            var cut = new Date(2014,5,01);
+            var cut = new Date(2014,1,01);
             for (var i = 0; i < dataset.length; i++) {
               if(isNaN(dataset[i].Long) || isNaN(dataset[i].Lat) || dataset[i].InspectionDate < cut) {
                 dataset.splice(i,1);
@@ -522,7 +520,7 @@
 
             return filteredData;
           }else {
-            console.log("vi er her");
+
             filteredData = rangeFilterData(dataset);
             filteredData = dropdownFilterData(filteredData);
             return filteredData;
@@ -598,13 +596,13 @@
         var countScore = function(dataset) {
           var result = [0,0,0,0,0];
           for (var i = 0; i < dataset.length; i++) {
-            if (dataset[i].Score == 0) {
+            if (dataset[i].Score <= 10) {
               result[0] += 1;
-            }else if (dataset[i].Score <= 10) {
-              result[1] += 1;
             }else if (dataset[i].Score <= 20) {
-              result[2] += 1;
+              result[1] += 1;
             }else if (dataset[i].Score <= 30) {
+              result[2] += 1;
+            }else if (dataset[i].Score <= 40) {
               result[3] += 1;
             }else {
               result[4] += 1;
@@ -625,13 +623,15 @@
               max = count;
             }
           }
+          return max;
         }
 
         var loadGraph = function(data) {
-          var yVariable = ["0", "1 to 10", "11 to 20", "21 to 30", "31+"];
-          var width = 800;
-          var height = 500;
-          var padding = 30;
+          var yVariable = ["0-10", "11-20", "21-30", "31-40", "41+"];
+          var BoroName = ["Manhattan", "Brooklyn", "Queens", "Bronx", "Staten Island"];
+          var width = window.innerWidth*0.95
+          var height = window.innerWidth*0.35;
+          var padding = width/10;
 
 
 
@@ -641,11 +641,8 @@
             .paddingInner(0.05);
 
           var yScale = d3.scaleLinear()
-                      .domain([
-                        0,
-                        maxcalc(data)
-                      ])
-                      .range([height - padding, padding]);
+                      .domain([0,maxcalc(data)])
+                      .range([height - padding, padding/4]);
 
           var xAxis = d3.axisBottom()
                       .scale(xScale)
@@ -653,7 +650,43 @@
 
           var yAxis = d3.axisLeft()
                       .scale(yScale)
-                      .ticks(5);
+                      .ticks(20);
+
+
+          var colorcoding = d3.select("#graph")
+                  .append("svg")
+                  .attr("width", width)
+                  .attr("height", height/10);
+
+          colorcoding.selectAll("rect")
+          .data(BoroName)
+          .enter()
+          .append("rect")
+          .attr("x", function(d, i) { return xScale(yVariable[i]); })
+          .attr("y", function(d, i) {
+          return height/10/4; })
+          .attr("width", height/10/2)
+          .attr("height", height/10/2)
+          .style("fill", function(d, i) {
+            return colors[i]
+          });
+
+
+          colorcoding.selectAll("text")
+          .data(BoroName)
+          .enter()
+          .append("text")
+          .text(function(d) {
+            return d;
+          })
+          .attr("x", function(d, i) { return xScale(yVariable[i])+height/10; })
+          .attr("y", function(d, i) {
+          return height/10/4 + height/10/2/1.5; })
+          .attr("width", height/10/2)
+          .attr("height", height/10/2);
+
+
+
 
           var svgGraph = d3.select("#graph")
       						.append("svg")
@@ -664,58 +697,103 @@
                   .attr("class", "xText label")
                   .attr("text-anchor", "middle")
                   .attr("x", width / 2)
-                  .attr("y", height)
-                  .text("Years");
+                  .attr("y", height-padding/1.5)
+                  .style("font-size", width/60 +"px")
+                  .text("Scores of the different resturants");
 
           svgGraph.append("text")
                   .attr("class", "yText label")
                   .attr("text-anchor", "middle")
-                  .attr("y", 0)
-                  .attr("x", - height / 2 - 20)
+                  .attr("y", 0+padding/4)
+                  .attr("x", - height / 2)
                   .attr("dy", ".75em")
                   .attr("transform", "rotate(-90)")
+                  .style("font-size", width/60 +"px")
                   .text("# of inspections");
 
           svgGraph.append("g")
                   .attr("class", "axis")
                   .attr("transform", "translate(0," + (height - padding) + ")")
+                  .style("font-size", width/100 +"px")
                   .call(xAxis)
 
           svgGraph.append("g")
                   .attr("class", "axis")
                   .attr("transform", "translate(" + (padding) + ",0)")
+                  .style("font-size", width/100 +"px")
                   .call(yAxis)
 
-          var bars = svg.selectAll("rect")
-          		.data(data)
+          data1 = data.slice(0, 5);
+          data2 = data.slice(5, 10);
+          data3 = data.slice(10, 15);
+          data4 = data.slice(15, 20);
+          data5 = data.slice(20, 25);
+
+          padding1 = 10;
+          var bars = svgGraph.selectAll("rect")
+          		.data(data1)
           		.enter();
-          		bars.append("rect")
-          	 	.attr("x", function(d) { return x(d.month); })
-          	    .attr("y", function(d) { return y(d.fresh_fruit); })
-          	 	.attr("width", 55)
-          	 	.attr("height", function(d) { return h - y(d.fresh_fruit); })
-          	 	.style("fill", "red");
-          	 bars.append("rect")
-                	.attr("x", function(d) { return x(d.month); })
-                 .attr("y", function(d) { return y(d.fresh_vegetable); })
-                 .attr("width", 55)
-                 .attr("height", function(d) { return h - y(d.fresh_vegetable); })
-                 .style("fill", "green");
-                bars.append("rect")
-             	.attr("x", function(d) { return x(d.month); })
-         		.attr("y", function(d) { return y(d.storage_fruit); })
-         		.attr("width", 55)
-         		.attr("height", function(d) { return h - y(d.storage_fruit); })
-         		.style("fill", "pink");
               bars.append("rect")
-             	.attr("x", function(d) { return x(d.month); })
-         		.attr("y", function(d) { return y(d.storage_vegetable); })
-         		.attr("width", 55)
-         		.attr("height", function(d) { return h - y(d.storage_vegetable); })
-         		.style("fill", "yellow");
+                .attr("x", function(d, i) { return xScale(yVariable[i])+padding/2; })
+                .attr("y", function(d, i) { return yScale(data1[i]+data2[i]+data3[i]+data4[i]+data5[i]); })
+                .attr("width", width/5-padding*1.3)
+                .attr("height", function(d, i) { return height - (yScale(data1[i]+data2[i]+data3[i]+data4[i]+data5[i]) + padding); })
+                .style("fill", colors[4]);
+              bars.append("rect")
+                .attr("x", function(d, i) { return xScale(yVariable[i])+padding/2; })
+                .attr("y", function(d, i) { return yScale(data1[i]+data2[i]+data3[i]+data4[i]); })
+                .attr("width", width/5-padding*1.3)
+                .attr("height", function(d, i) { return height - (yScale(data1[i]+data2[i]+data3[i]+data4[i]) + padding); })
+                .style("fill", colors[3]);
+              bars.append("rect")
+                .attr("x", function(d, i) { return xScale(yVariable[i])+padding/2; })
+                .attr("y", function(d, i) { return yScale(data1[i]+data2[i]+data3[i]); })
+                .attr("width", width/5-padding*1.3)
+                .attr("height", function(d, i) { return height - (yScale(data1[i]+data2[i]+data3[i]) + padding); })
+                .style("fill", colors[2]);
+              bars.append("rect")
+                .attr("x", function(d, i) { return xScale(yVariable[i])+padding/2; })
+                .attr("y", function(d, i) { return yScale(data1[i]+data2[i]); })
+                .attr("width", width/5-padding*1.3)
+                .attr("height", function(d, i) { return height - (yScale(data1[i]+data2[i]) + padding); })
+                .style("fill", colors[1]);
+              bars.append("rect")
+                .attr("x", function(d, i) { return xScale(yVariable[i])+padding/2; })
+                .attr("y", function(d, i) { return yScale(data1[i]); })
+                .attr("width", width/5-padding*1.3)
+                .attr("height", function(d, i) { return height - (yScale(data1[i]) + padding); })
+                .style("fill", colors[0]);
         }
 
+        var rowConverter = function(row) {
+          //console.log(parseFloat(row.LAT));
+          //console.log(row.CAMIS);
+          return {
+            Camis: row.CAMIS,
+            Dba: row.DBA,
+            Boro: row.BORO,
+            Building: row.BUILDING,
+            Street: row.STREET,
+            ZipCode: row.ZIPCODE,
+            Phone: row.PHONE,
+            Description: row["CUISINE DESCRIPTION"],
+            Score: parseInt(row.SCORE),
+            //Grade: row.GRADE,
+            Critical: row["CRITICAL FLAG"],
+            ViolationD: row["VIOLATION DESCRIPTION"],
+            InspectionDate: new Date(row["INSPECTION DATE"]),
+            Lat: parseFloat(row.LAT),
+            Long: parseFloat(row.LON)
+          };
+        };
 
+        var rowConverterGraph = function(row) {
+          //console.log(parseFloat(row.LAT));
+          return {
+            Boro: row.BORO,
+            Score: parseInt(row.SCORE)
+          };
+        };
 
 
         var filterandloadCircles = function(dataset,svgMap,projection,toolTip) {
@@ -724,21 +802,28 @@
           loadCircles(svgMap,filteredData,projection,toolTip)
         }
 
-        d3.csv("./data/dataset.csv", rowConverter, function(data) {
-          sortandCutArray(data);
-          loadMap(function(json,path,projection,svgMap) {
+        //dataset2reduced
+        d3.csv("./data/dataset2reduced10TR.csv", rowConverter, function(data) {
 
+          console.log(data);
+          sortandCutArray(data);
+          //console.log(data);
+          loadMap(function(json,path,projection,svgMap) {
             var toolTip = createTooltip();
             loadTimeline(data,projection,svgMap,toolTip);
             loadSlider(data,svgMap,projection,toolTip);
             loadDropdown(data,svgMap,projection,toolTip);
             loadCircles(svgMap,data,projection,toolTip);
-
-
           });
-          newData = graphFiltering(data);
-          loadGraph(newData);
+          //var newData = graphFiltering(data);
+          var newData2 = [34420,56574,28237,11276,17749,21004,36856,17368,7035,12536,20770,32940,15209,5643,9610,8216,13091,5929,2249,3549,2775,4724,2692,982,1467];
+          loadGraph(newData2);
 
+          /*d3.csv("./data/datasetPart2.csv", rowConverterGraph, function(data) {
+            var newData = graphFiltering(data);
+            //console.log(newData);
+            loadGraph(newData);
+          });*/
         });
 
 
