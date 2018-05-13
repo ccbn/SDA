@@ -9,6 +9,10 @@
         <script src="./jquery/jquery.js"></script>
         <script src="./jquery/jquery-ui.js"></script>
         <style>
+          h1 
+          {
+            font-size: 50px;
+          }
           .h2
           {
             font-family: Georgia;
@@ -92,17 +96,32 @@
             background: transparent;
 
           }
+          p 
+          {
+            margin: 0 20px;
+            font-size: 20px;
+          }
 
 
         </style>
     </head>
     <body>
+      <center><h1>Restaurant exploration in New York City</h1></center>
+      <p>This page provides an overview and details of the inspection results by the Department of Health and Mental Hygeine (DOHMH) on restaurants in New York City. For instance, 
+        did you know that Manhattan have most inspection results with the best score (0 - 10) in the time period 06/01/13 and 12/31/2016? 
+        Manhattan is therefore in general a great Borough to eat. You can find this result in the graph below, which is an overview of the inspection results on the restaurants in New York City.
+        The graph shows the number of inspection results which have a score in an interval and displays them in color which is the Borough the retaurant is located in.
+        </p>
+      <div id="graph"></div>
       <div id="scatter"></div>
-      <div id="timeline"></div>
+      </br>
+      <p>The following map of New York City lets you explore the inspection results in details. Each borough is colored in their own color, a restaurant location is shown as a small circle and each circle is colored where green="good", yellow="between good and bad" red="bad" score. 
+        If you want to show only a number of restaurants on the map that meets some criteria based on score, critical flag and time period, you can do this by using the filters above the map. By hovering a circle a tooltip pops up that tells you the restaurant name and score.
+        When clicking a circle on the map more details of the inspection results on that specific restaurant is shown.         
+        <div id="timeline"></div>
       <div class = "filter" id="sliderRangeWrapper">
         <h3>Range: <span id="sliderRangeText"></span></h3>
         <div id="sliderrange">
-
         </div>
       </div>
       <div class = "filter">
@@ -136,7 +155,6 @@
 
         <div id="detailsInspections"></div>
       </div>
-      <div id="graph"></div>
         <script type="text/javascript">
 
         var resizeId;
@@ -447,8 +465,7 @@
                   for (var i = 0; i < result.length; i++) {
                     tableString += "<table>"
                      + "<tr><td>Inspection Date</td>" + "<td>" + DateFormater(result[i].InspectionDate) + "</td></tr>"
-                     + "<tr><td>Violation Decription</td>" + "<td>" + result[i].Building + " " + result[i].Street + ", " + result[i].Boro
-                        + ", NY " + result[i].ZipCode + "</td></tr>"
+                     + "<tr><td>Violation Decription</td>" + "<td>" + result[i].ViolationD + "</td></tr>"
                      + "<tr><td>Score</td>" + "<td>" + result[i].Score + "</td></tr>"
                      + "<tr><td>Critical Flag</td>" + "<td>" + result[i].Critical + "</td></tr>"
                      + "</table>";
@@ -725,7 +742,7 @@
                   .attr("x", width / 2)
                   .attr("y", height-padding/1.5)
                   .style("font-size", width/60 +"px")
-                  .text("Scores of the different resturants");
+                  .text("Scores");
 
           svgGraph.append("text")
                   .attr("class", "yText label")
