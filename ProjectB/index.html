@@ -169,7 +169,7 @@
         function loadTimeline(dataset,projection,svgMap,toolTip,brushedfunc) {
           var width = window.innerWidth;
           var height = window.innerWidth*0.2;
-          var padding = 30;
+          var padding = width/25;//30;
 
           var NumberOfInspectionsPerDay = d3.nest()
                 .key(function(d) { return d.InspectionDate})
@@ -218,26 +218,30 @@
                   .attr("class", "xText label")
                   .attr("text-anchor", "middle")
                   .attr("x", width / 2)
-                  .attr("y", height)
+                  .attr("y", height-height/40)
+                  .style("font-size", width/60 +"px")
                   .text("Years");
 
           svgTimeline.append("text")
                   .attr("class", "yText label")
                   .attr("text-anchor", "middle")
-                  .attr("y", 0)
-                  .attr("x", - height / 2 - 20)
+                  .attr("y", 0+width/200)
+                  .attr("x", - height / 2)
                   .attr("dy", ".75em")
                   .attr("transform", "rotate(-90)")
+                  .style("font-size", width/60 +"px")
                   .text("# of inspections");
 
           svgTimeline.append("g")
                   .attr("class", "axis")
                   .attr("transform", "translate(0," + (height - padding) + ")")
+                  .style("font-size", width/100 +"px")
                   .call(xAxis)
 
           svgTimeline.append("g")
                   .attr("class", "axis")
                   .attr("transform", "translate(" + (padding) + ",0)")
+                  .style("font-size", width/100 +"px")
                   .call(yAxis)
 
           var circles = svgTimeline.append("g")
