@@ -356,7 +356,13 @@
           var tableString = "<h1>Loading...</h1>";
           document.getElementById("detailsInspections").innerHTML = tableString;
           document.getElementById("restaurantName").scrollIntoView();
-          
+
+          /*function fetchData(callback){
+            setTimeout(function (){
+              callback([6, 5, 4, 3, 2, 1]);
+            }, 2000);
+          }*/
+
           tableString = "";
           var result = data.filter(function(newD) {return newD.Camis == d.Camis});
 
