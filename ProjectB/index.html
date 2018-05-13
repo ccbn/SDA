@@ -342,7 +342,8 @@
             });
         };
 
-        var rowConverter = function(row) {
+        /*var rowConverter = function(row) {
+          //console.log(parseFloat(row.LAT));
           return {
             Camis: row.CAMIS,
             Dba: row.DBA,
@@ -360,7 +361,7 @@
             Lat: parseFloat(row.LAT),
             Long: parseFloat(row.LON)
           };
-        };
+        };*/
 
         function handleMouseClick(d, data) {
           var DateFormater = d3.timeFormat("%m/%d/%Y");
@@ -524,7 +525,7 @@
 
             return filteredData;
           }else {
-            console.log("vi er her");
+
             filteredData = rangeFilterData(dataset);
             filteredData = dropdownFilterData(filteredData);
             return filteredData;
@@ -635,7 +636,7 @@
           var BoroName = ["Manhattan", "Brooklyn", "Queens", "Bronx", "Staten Island"];
           var width = window.innerWidth*0.95
           var height = window.innerWidth*0.35;
-          var padding = width/20;
+          var padding = width/10;
 
 
 
@@ -646,7 +647,7 @@
 
           var yScale = d3.scaleLinear()
                       .domain([0,maxcalc(data)])
-                      .range([height - padding, padding]);
+                      .range([height - padding, padding/4]);
 
           var xAxis = d3.axisBottom()
                       .scale(xScale)
@@ -654,7 +655,9 @@
 
           var yAxis = d3.axisLeft()
                       .scale(yScale)
-                      .ticks(5);
+                      .ticks(20);
+
+
           var colorcoding = d3.select("#graph")
                   .append("svg")
                   .attr("width", width)
@@ -664,7 +667,7 @@
           .data(BoroName)
           .enter()
           .append("rect")
-          .attr("x", function(d, i) { return xScale(yVariable[i])-padding; })
+          .attr("x", function(d, i) { return xScale(yVariable[i]); })
           .attr("y", function(d, i) {
           return height/10/4; })
           .attr("width", height/10/2)
@@ -681,7 +684,7 @@
           .text(function(d) {
             return d;
           })
-          .attr("x", function(d, i) { return xScale(yVariable[i])-padding+height/10; })
+          .attr("x", function(d, i) { return xScale(yVariable[i])+height/10; })
           .attr("y", function(d, i) {
           return height/10/4 + height/10/2/1.5; })
           .attr("width", height/10/2)
@@ -699,15 +702,15 @@
                   .attr("class", "xText label")
                   .attr("text-anchor", "middle")
                   .attr("x", width / 2)
-                  .attr("y", height)
+                  .attr("y", height-padding/1.5)
                   .style("font-size", width/60 +"px")
-                  .text("Years");
+                  .text("Scores of the different resturants");
 
           svgGraph.append("text")
                   .attr("class", "yText label")
                   .attr("text-anchor", "middle")
-                  .attr("y", 0)
-                  .attr("x", - height / 2 - 20)
+                  .attr("y", 0+padding/4)
+                  .attr("x", - height / 2)
                   .attr("dy", ".75em")
                   .attr("transform", "rotate(-90)")
                   .style("font-size", width/60 +"px")
@@ -716,13 +719,13 @@
           svgGraph.append("g")
                   .attr("class", "axis")
                   .attr("transform", "translate(0," + (height - padding) + ")")
-                  .style("font-size", width/80 +"px")
+                  .style("font-size", width/100 +"px")
                   .call(xAxis)
 
           svgGraph.append("g")
                   .attr("class", "axis")
                   .attr("transform", "translate(" + (padding) + ",0)")
-                  .style("font-size", width/80 +"px")
+                  .style("font-size", width/100 +"px")
                   .call(yAxis)
 
           data1 = data.slice(0, 5);
@@ -736,39 +739,65 @@
           		.data(data1)
           		.enter();
               bars.append("rect")
-                .attr("x", function(d, i) { return xScale(yVariable[i])+padding1; })
-                .attr("y", function(d, i) {
-                return yScale(data1[i]+data2[i]+data3[i]+data4[i]+data5[i]); })
-                .attr("width", width/5-padding+5)
+                .attr("x", function(d, i) { return xScale(yVariable[i])+padding/2; })
+                .attr("y", function(d, i) { return yScale(data1[i]+data2[i]+data3[i]+data4[i]+data5[i]); })
+                .attr("width", width/5-padding*1.3)
                 .attr("height", function(d, i) { return height - (yScale(data1[i]+data2[i]+data3[i]+data4[i]+data5[i]) + padding); })
                 .style("fill", colors[4]);
               bars.append("rect")
-                .attr("x", function(d, i) { return xScale(yVariable[i])+padding1; })
+                .attr("x", function(d, i) { return xScale(yVariable[i])+padding/2; })
                 .attr("y", function(d, i) { return yScale(data1[i]+data2[i]+data3[i]+data4[i]); })
-                .attr("width", width/5-padding+5)
+                .attr("width", width/5-padding*1.3)
                 .attr("height", function(d, i) { return height - (yScale(data1[i]+data2[i]+data3[i]+data4[i]) + padding); })
                 .style("fill", colors[3]);
               bars.append("rect")
-                .attr("x", function(d, i) { return xScale(yVariable[i])+padding1; })
+                .attr("x", function(d, i) { return xScale(yVariable[i])+padding/2; })
                 .attr("y", function(d, i) { return yScale(data1[i]+data2[i]+data3[i]); })
-                .attr("width", width/5-padding+5)
+                .attr("width", width/5-padding*1.3)
                 .attr("height", function(d, i) { return height - (yScale(data1[i]+data2[i]+data3[i]) + padding); })
                 .style("fill", colors[2]);
               bars.append("rect")
-                .attr("x", function(d, i) { return xScale(yVariable[i])+padding1; })
+                .attr("x", function(d, i) { return xScale(yVariable[i])+padding/2; })
                 .attr("y", function(d, i) { return yScale(data1[i]+data2[i]); })
-                .attr("width", width/5-padding+5)
+                .attr("width", width/5-padding*1.3)
                 .attr("height", function(d, i) { return height - (yScale(data1[i]+data2[i]) + padding); })
                 .style("fill", colors[1]);
               bars.append("rect")
-                .attr("x", function(d, i) { return xScale(yVariable[i])+padding1; })
+                .attr("x", function(d, i) { return xScale(yVariable[i])+padding/2; })
                 .attr("y", function(d, i) { return yScale(data1[i]); })
-                .attr("width", width/5-padding+5)
+                .attr("width", width/5-padding*1.3)
                 .attr("height", function(d, i) { return height - (yScale(data1[i]) + padding); })
                 .style("fill", colors[0]);
         }
 
+        var rowConverter = function(row) {
+          //console.log(parseFloat(row.LAT));
+          return {
+            Camis: row.CAMIS,
+            Dba: row.DBA,
+            Boro: row.BORO,
+            Building: row.BUILDING,
+            Street: row.STREET,
+            ZipCode: row.ZIPCODE,
+            Phone: row.PHONE,
+            Description: row["CUISINE DESCRIPTION"],
+            Score: parseInt(row.SCORE),
+            Grade: row.GRADE,
+            Critical: row["CRITICAL FLAG"],
+            ViolationD: row["VIOLATION DESCRIPTION"],
+            InspectionDate: new Date(row["INSPECTION DATE"]),
+            Lat: parseFloat(row.LAT),
+            Long: parseFloat(row.LON)
+          };
+        };
 
+        var rowConverterGraph = function(row) {
+          //console.log(parseFloat(row.LAT));
+          return {
+            Boro: row.BORO,
+            Score: parseInt(row.SCORE)
+          };
+        };
 
 
         var filterandloadCircles = function(dataset,svgMap,projection,toolTip) {
@@ -779,19 +808,23 @@
 
         d3.csv("./data/dataset.csv", rowConverter, function(data) {
           sortandCutArray(data);
+          //console.log(data);
           loadMap(function(json,path,projection,svgMap) {
-
             var toolTip = createTooltip();
             loadTimeline(data,projection,svgMap,toolTip);
             loadSlider(data,svgMap,projection,toolTip);
             loadDropdown(data,svgMap,projection,toolTip);
             loadCircles(svgMap,data,projection,toolTip);
-
-
           });
-          newData = graphFiltering(data);
-          loadGraph(newData);
+          //var newData = graphFiltering(data);
+          var newData2 = [34420,56574,28237,11276,17749,21004,36856,17368,7035,12536,20770,32940,15209,5643,9610,8216,13091,5929,2249,3549,2775,4724,2692,982,1467];
+          loadGraph(newData2);
 
+          /*d3.csv("./data/datasetPart2.csv", rowConverterGraph, function(data) {
+            var newData = graphFiltering(data);
+            //console.log(newData);
+            loadGraph(newData);
+          });*/
         });
 
 
