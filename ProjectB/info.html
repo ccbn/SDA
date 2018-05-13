@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Page Template</title>
+        <script type="text/javascript" src="d3.js"></script>
+        <link rel="stylesheet" href="css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="./jquery/jquery-ui.css">
+        <script src="./jquery/jquery.js"></script>
+        <script src="./jquery/jquery-ui.js"></script>
+        <style>
+          h1
+          {
+            font-family: Georgia;
+            font-weight: bold;
+            font-size: 50px;
+          }
+          h2
+          {
+            font-family: Georgia;
+            font-weight: bold;
+            font-size: 36px;
+          }
+          .p-custom
+          {
+            font-family: Georgia;
+            font-size: 14px;
+            line-height: 1.6em;
+          }
+
+
+
+        </style>
+    </head>
+    <body>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-2"></div>
+            <div class="col-md-8">
+              <center><h1>EXPLAINER PAGE</h1></center>
+
+              <h2>Motivation</h2>
+              <h3>What is your dataset?</h3>
+              <p>
+                The dataset we are using is DOHMH_New_York_City_Restaurant_Inspection_Results with is made by
+                the Department of Health and Mental Hygiene from New York.
+              </p>
+
+              <h3>Why did you choose this/these particular dataset(s)?</h3>
+              <p>
+                We choose this dataset because it looks interesting and because it had usefuld information
+                about the resturants in New York like the score of the different resturants, if they have any critical faults and so on.
+              </p>
+
+              <h3>What was your goal for the end user’s experience?</h3>
+              <p>
+                The goal for the end user was to be able to make a informed decision about with resturant to eat at when
+                living in New York or when being a turist in the city.
+              </p>
+
+              <h2>Basic stats</h2>
+
+              <h3>Write about your choices in data cleaning and preprocessing</h3>
+              <p>
+                We have done very little clening of the dataset because we use most of the dataset for one thing or another
+                on the webpage but because we had to add some data to the dataset in the form of geocoding by using google.
+                Because of time the biggest dataset with geocordinate we have is 40.000 rows but when truing to use this in
+                our map it is very slow or realy non responsive so we ented up using a modifieded dataset with 10.000 rows
+                randomly selected from the 40.000 rows
+              </p>
+
+              <h3>Write a short section that discusses the dataset stats, containing key points/plots from your exploratory data analysis.</h3>
+              <p>
+                For us the key points in the dataset is the address of the resturant, the score that the resturant godt at the inspection
+                and the date that the inspection was performed. Also another point that was important was if a resturant had any critical violation at the inspection time.
+              </p>
+
+              <h2>Genre</h2>
+              <h3>Which tools did you use from each of the 3 categories of Visual Narrative (Figure 7 in Segal and Heer). Why?</h3>
+              <p>
+                We have the following from the Visual Narrative <br>
+                Timebar/timeLine so that it is posible to select the start and end date that the data on the map shows.
+              </p>
+              <p>
+                Feature Distinction because in our map we color the circles with a gradient dependent on the score of the resturants.
+                we also use the to indicate the difference boroughs in New York and in our bar plot.
+              </p>
+              <p>
+                Animated Transitions in our map you can brush to select a start and end date that gets updated on the map when you move the brush.
+              </p>
+
+
+              <h3>Which tools did you use from each of the 3 categories of Narrative Structure (Figure 7 in Segal and Heer). Why?</h3>
+              <p>
+                Our webpage is Random Access because the user can access all the information in the way the user wants by scroling up or down
+                and because all the information on the webpage is on one page so there is no link to other webpages that contains more information.
+              </p>
+
+              <p>
+                In our webpage we have Hover Highlighting / Details this can be seen when holding a muse over a circle on the map there is a tooltip
+                with information about the specific resturant and if one of the circle is clicked even more information is shown about the resturant
+                about where the resturant is located the phone nr. and all the different inspection the resturant has had with what the score was when
+                the inspeciton was done. <br>
+
+                On the map there is also a Filtering / Selection option where it is posible to filter the data by what the score is and the date
+                it is also posible to select if the circles shown on the map is has critical mistakes or not and more.
+              </p>
+
+              <p>
+                On the webpage there is headlines and captions to help the user in what the different part of the figures represent and there
+                is also some text presentation the different part of the webpage.
+              </p>
+
+
+
+              <p>
+
+              </p>
+
+              <h2>Visualizations</h2>
+              <h3>Explain the visualizations you’ve chosen.</h3>
+              <p>
+              </p>
+
+              <h3>Why are they right for the story you want to tell?</h3>
+              <p>
+              </p>
+
+              <h2>Discussion</h2>
+              <h3>What went well?,</h3>
+              <p>
+              </p>
+
+              <h3>What is still missing? What could be improved?, Why?</h3>
+              <p>
+              </p>
+
+              <h2>Contributions</h2>
+              <h3>You should write (just briefly) which group member was the main responsible for which elements of the assignment.
+                (I want you guys to understand every part of the assignment, but usually there is someone who took lead role on certain
+                portions of the work. That’s what you should explain).</h3>
+              <p>
+              </p>
+              </p>
+            </div>
+          <div class="col-md-2"></div>
+        </div>
+      </div>
+    </body>
+</html>

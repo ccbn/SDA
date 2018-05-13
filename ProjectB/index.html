@@ -9,7 +9,7 @@
         <script src="./jquery/jquery.js"></script>
         <script src="./jquery/jquery-ui.js"></script>
         <style>
-          h1 
+          h1
           {
             font-size: 50px;
           }
@@ -96,7 +96,7 @@
             background: transparent;
 
           }
-          p 
+          p
           {
             margin: 0 20px;
             font-size: 20px;
@@ -107,17 +107,17 @@
     </head>
     <body>
       <center><h1>Restaurant exploration in New York City</h1></center>
-      <p>This page provides an overview and details of the inspection results by the Department of Health and Mental Hygeine (DOHMH) on restaurants in New York City. For instance, 
-        did you know that Manhattan have most inspection results with the best score (0 - 10) in the time period 06/01/13 and 12/31/2016? 
+      <p>This page provides an overview and details of the inspection results by the Department of Health and Mental Hygeine (DOHMH) on restaurants in New York City. For instance,
+        did you know that Manhattan have most inspection results with the best score (0 - 10) in the time period 06/01/13 and 12/31/2016?
         Manhattan is therefore in general a great Borough to eat. You can find this result in the graph below, which is an overview of the inspection results on the restaurants in New York City.
         The graph shows the number of inspection results which have a score in an interval and displays them in color which is the Borough the retaurant is located in.
         </p>
       <div id="graph"></div>
       <div id="scatter"></div>
       </br>
-      <p>The following map of New York City lets you explore the inspection results in details. Each borough is colored in their own color, a restaurant location is shown as a small circle and each circle is colored where green="good", yellow="between good and bad" red="bad" score. 
+      <p>The following map of New York City lets you explore the inspection results in details. Each borough is colored in their own color, a restaurant location is shown as a small circle and each circle is colored where green="good", yellow="between good and bad" red="bad" score.
         If you want to show only a number of restaurants on the map that meets some criteria based on score, critical flag and time period, you can do this by using the filters above the map. By hovering a circle a tooltip pops up that tells you the restaurant name and score.
-        When clicking a circle on the map more details of the inspection results on that specific restaurant is shown.         
+        When clicking a circle on the map more details of the inspection results on that specific restaurant is shown.
         <div id="timeline"></div>
       <div class = "filter" id="sliderRangeWrapper">
         <h3>Range: <span id="sliderRangeText"></span></h3>
@@ -669,7 +669,7 @@
           return max;
         }
 
-        var loadGraph = function(data) {
+        var loadGraph = function(data,toolTip) {
           var yVariable = ["0-10", "11-20", "21-30", "31-40", "41+"];
           var BoroName = ["Manhattan", "Brooklyn", "Queens", "Bronx", "Staten Island"];
           var width = window.innerWidth*0.95
@@ -781,31 +781,116 @@
                 .attr("y", function(d, i) { return yScale(data1[i]+data2[i]+data3[i]+data4[i]+data5[i]); })
                 .attr("width", width/5-padding*1.3)
                 .attr("height", function(d, i) { return height - (yScale(data1[i]+data2[i]+data3[i]+data4[i]+data5[i]) + padding); })
-                .style("fill", colors[4]);
+                .style("fill", colors[4])
+                .on("mouseover", function(d,i) {
+                  d3.select(this)
+                    .attr("r", width/150);
+                    toolTip.transition()
+                         .duration(200)
+                         .style("opacity", .9);
+                    toolTip.html("Score: " + data5[i])
+                         .style("left", (d3.event.pageX + 5) + "px")
+                         .style("top", (d3.event.pageY - 28) + "px");
+                })
+                .on("mouseout", function(d) {
+                  d3.select(this)
+                    .attr("r", width/300);
+                    toolTip.transition()
+                         .duration(500)
+                         .style("opacity", 0);
+                });
               bars.append("rect")
                 .attr("x", function(d, i) { return xScale(yVariable[i])+padding/2; })
                 .attr("y", function(d, i) { return yScale(data1[i]+data2[i]+data3[i]+data4[i]); })
                 .attr("width", width/5-padding*1.3)
                 .attr("height", function(d, i) { return height - (yScale(data1[i]+data2[i]+data3[i]+data4[i]) + padding); })
-                .style("fill", colors[3]);
+                .style("fill", colors[3])
+                .on("mouseover", function(d,i) {
+                  d3.select(this)
+                    .attr("r", width/150);
+                    toolTip.transition()
+                         .duration(200)
+                         .style("opacity", .9);
+                    toolTip.html("Score: " + data4[i])
+                         .style("left", (d3.event.pageX + 5) + "px")
+                         .style("top", (d3.event.pageY - 28) + "px");
+                })
+                .on("mouseout", function(d) {
+                  d3.select(this)
+                    .attr("r", width/300);
+                    toolTip.transition()
+                         .duration(500)
+                         .style("opacity", 0);
+                });
               bars.append("rect")
                 .attr("x", function(d, i) { return xScale(yVariable[i])+padding/2; })
                 .attr("y", function(d, i) { return yScale(data1[i]+data2[i]+data3[i]); })
                 .attr("width", width/5-padding*1.3)
                 .attr("height", function(d, i) { return height - (yScale(data1[i]+data2[i]+data3[i]) + padding); })
-                .style("fill", colors[2]);
+                .style("fill", colors[2])
+                .on("mouseover", function(d,i) {
+                  d3.select(this)
+                    .attr("r", width/150);
+                    toolTip.transition()
+                         .duration(200)
+                         .style("opacity", .9);
+                    toolTip.html("Score: " + data3[i])
+                         .style("left", (d3.event.pageX + 5) + "px")
+                         .style("top", (d3.event.pageY - 28) + "px");
+                })
+                .on("mouseout", function(d) {
+                  d3.select(this)
+                    .attr("r", width/300);
+                    toolTip.transition()
+                         .duration(500)
+                         .style("opacity", 0);
+                });
               bars.append("rect")
                 .attr("x", function(d, i) { return xScale(yVariable[i])+padding/2; })
                 .attr("y", function(d, i) { return yScale(data1[i]+data2[i]); })
                 .attr("width", width/5-padding*1.3)
                 .attr("height", function(d, i) { return height - (yScale(data1[i]+data2[i]) + padding); })
-                .style("fill", colors[1]);
+                .style("fill", colors[1])
+                .on("mouseover", function(d,i) {
+                  d3.select(this)
+                    .attr("r", width/150);
+                    toolTip.transition()
+                         .duration(200)
+                         .style("opacity", .9);
+                    toolTip.html("Score: " + data2[i])
+                         .style("left", (d3.event.pageX + 5) + "px")
+                         .style("top", (d3.event.pageY - 28) + "px");
+                })
+                .on("mouseout", function(d) {
+                  d3.select(this)
+                    .attr("r", width/300);
+                    toolTip.transition()
+                         .duration(500)
+                         .style("opacity", 0);
+                });
               bars.append("rect")
                 .attr("x", function(d, i) { return xScale(yVariable[i])+padding/2; })
                 .attr("y", function(d, i) { return yScale(data1[i]); })
                 .attr("width", width/5-padding*1.3)
                 .attr("height", function(d, i) { return height - (yScale(data1[i]) + padding); })
-                .style("fill", colors[0]);
+                .style("fill", colors[0])
+                .on("mouseover", function(d,i) {
+                  d3.select(this)
+                    .attr("r", width/150);
+                    toolTip.transition()
+                         .duration(200)
+                         .style("opacity", .9);
+                    toolTip.html("Score: " + data1[i])
+                         .style("left", (d3.event.pageX + 5) + "px")
+                         .style("top", (d3.event.pageY - 28) + "px");
+                })
+                .on("mouseout", function(d) {
+                  d3.select(this)
+                    .attr("r", width/300);
+                    toolTip.transition()
+                         .duration(500)
+                         .style("opacity", 0);
+                });
         }
 
         var rowConverter = function(row) {
@@ -850,9 +935,10 @@
 
           //console.log(data);
           sortandCutArray(data);
+          var toolTip = createTooltip();
           //console.log(data);
           loadMap(function(json,path,projection,svgMap) {
-            var toolTip = createTooltip();
+
             loadTimeline(data,projection,svgMap,toolTip);
             loadSlider(data,svgMap,projection,toolTip);
             loadDropdown(data,svgMap,projection,toolTip);
@@ -860,7 +946,7 @@
           });
           //var newData = graphFiltering(data);
           var newData2 = [34420,56574,28237,11276,17749,21004,36856,17368,7035,12536,20770,32940,15209,5643,9610,8216,13091,5929,2249,3549,2775,4724,2692,982,1467];
-          loadGraph(newData2);
+          loadGraph(newData2,toolTip);
 
           /*d3.csv("./data/datasetPart2.csv", rowConverterGraph, function(data) {
             var newData = graphFiltering(data);
