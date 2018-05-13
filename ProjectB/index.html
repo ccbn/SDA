@@ -342,27 +342,6 @@
             });
         };
 
-        /*var rowConverter = function(row) {
-          //console.log(parseFloat(row.LAT));
-          return {
-            Camis: row.CAMIS,
-            Dba: row.DBA,
-            Boro: row.BORO,
-            Building: row.BUILDING,
-            Street: row.STREET,
-            ZipCode: row.ZIPCODE,
-            Phone: row.PHONE,
-            Description: row["CUISINE DESCRIPTION"],
-            Score: parseInt(row.SCORE),
-            Grade: row.GRADE,
-            Critical: row["CRITICAL FLAG"],
-            ViolationD: row["VIOLATION DESCRIPTION"],
-            InspectionDate: new Date(row["INSPECTION DATE"]),
-            Lat: parseFloat(row.LAT),
-            Long: parseFloat(row.LON)
-          };
-        };*/
-
         function handleMouseClick(d, data) {
           var DateFormater = d3.timeFormat("%m/%d/%Y");
           document.getElementById("restaurantName").innerHTML = d.Dba;
@@ -371,7 +350,20 @@
           table.rows[1].cells[1].innerHTML = d.Phone;
           table.rows[2].cells[1].innerHTML = d.Description;
           var tableString = "";
-          for (var i = 0; i < data.length; i++) {
+          //new stof
+          var result = data.filter(function(newD) {return newD.Camis == d.Camis});
+
+          for (var i = 0; i < result.length; i++) {
+            tableString += "<table>"
+             + "<tr><td>Inspection Date</td>" + "<td>" + DateFormater(result[i].InspectionDate) + "</td></tr>"
+             + "<tr><td>Violation Decription</td>" + "<td>" + result[i].Building + " " + result[i].Street + ", " + result[i].Boro
+                + ", NY " + result[i].ZipCode + "</td></tr>"
+             + "<tr><td>Score</td>" + "<td>" + result[i].Score + "</td></tr>"
+             + "<tr><td>Critical Flag</td>" + "<td>" + result[i].Critical + "</td></tr>"
+             + "</table>";
+          }
+          //old stof
+          /*for (var i = 0; i < data.length; i++) {
             if(d.Camis == data[i].Camis) {
               tableString += "<table>"
                + "<tr><td>Inspection Date</td>" + "<td>" + DateFormater(data[i].InspectionDate) + "</td></tr>"
@@ -381,7 +373,7 @@
                + "<tr><td>Critical Flag</td>" + "<td>" + data[i].Critical + "</td></tr>"
                + "</table>";
              }
-          }
+          }*/
           document.getElementById("detailsInspections").innerHTML = tableString;
 
           document.getElementById("restaurantName").scrollIntoView();
@@ -403,7 +395,6 @@
         }
 
         function loadCircles(svgMap,data,projection,tooltip) {
-
           var maxScore = d3.max(data, function(d) { return d.Score;});
           var colorScale = d3.scaleLinear()
                         .domain([0,20])
@@ -463,7 +454,7 @@
               return 0;
             });
 
-            var cut = new Date(2014,5,01);
+            var cut = new Date(2014,1,01);
             for (var i = 0; i < dataset.length; i++) {
               if(isNaN(dataset[i].Long) || isNaN(dataset[i].Lat) || dataset[i].InspectionDate < cut) {
                 dataset.splice(i,1);
@@ -772,6 +763,7 @@
 
         var rowConverter = function(row) {
           //console.log(parseFloat(row.LAT));
+          //console.log(row.CAMIS);
           return {
             Camis: row.CAMIS,
             Dba: row.DBA,
@@ -782,7 +774,7 @@
             Phone: row.PHONE,
             Description: row["CUISINE DESCRIPTION"],
             Score: parseInt(row.SCORE),
-            Grade: row.GRADE,
+            //Grade: row.GRADE,
             Critical: row["CRITICAL FLAG"],
             ViolationD: row["VIOLATION DESCRIPTION"],
             InspectionDate: new Date(row["INSPECTION DATE"]),
@@ -806,7 +798,9 @@
           loadCircles(svgMap,filteredData,projection,toolTip)
         }
 
+        //dataset2reduced
         d3.csv("./data/dataset.csv", rowConverter, function(data) {
+          console.log(data);
           sortandCutArray(data);
           //console.log(data);
           loadMap(function(json,path,projection,svgMap) {
